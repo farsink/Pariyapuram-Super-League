@@ -1,0 +1,28 @@
+:root {
+  --primary-color: #0D0C1D;
+  --secondary-color: #F7F7FF;
+  --accent-color: #ffff00;
+  --background-color: #F4F4F9;
+  --text-color: #f9f9f9;
+}
+
+
+/* Offcanvas */
+card {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+.offcanvas-body h4 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.offcanvas-body img {
+  width: 30px;
+  height: 30px;
+}
+
+.calos{
+  background-image: url("../src/assets/ticket-gradient.png");
+}
