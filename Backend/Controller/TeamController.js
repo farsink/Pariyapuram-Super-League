@@ -1,27 +1,21 @@
 const Team = require("../Models/Team");
 const Player = require("../Models/Player");
+const { json, request } = require("express");
 
 // Create a new team with logo upload
 exports.createTeam = async (req, res) => {
   try {
-    const { name, manager, currentPosition, currentPoints, players } = req.body;
+    const { name, manager, currentPosition, currentPoints, players, stats } = req.body;
 
-    // Parse the players field from a JSON string to an array
-    let playersArray;
-    try {
-      playersArray = JSON.parse(players); // Parse the JSON string
-    } catch (err) {
-      throw new Error("Players must be a valid JSON array of player names.");
-    }
+    // Split and trim player names
+    const playerNamesArray = players.split(",").map((name) => name.trim().replace(/['"]+/g, "")); // Remove extra quotes
 
-    // Validate that playersArray is an array
-    if (!Array.isArray(playersArray)) {
-      throw new Error("Players must be an array of player names.");
-    }
+    // Split and trim manager names
+    const Managersarray = manager.split(",").map((name) => name.trim().replace(/['"]+/g, "")); // Remove extra quotes
 
     // Find player IDs by names (case-insensitive)
     const playerIds = await Promise.all(
-      playersArray.map(async (playerName) => {
+      playerNamesArray.map(async (playerName) => {
         const player = await Player.findOne({ name: new RegExp(`^${playerName}$`, "i") });
         if (!player) {
           throw new Error(`Player not found: ${playerName}`);
@@ -29,15 +23,17 @@ exports.createTeam = async (req, res) => {
         return player._id; // Return the player's ObjectId
       })
     );
+    const parsedStats = typeof stats === "string" ? JSON.parse(stats) : stats;
 
     // Create the team with the logo path and player IDs
     const team = await Team.create({
-      name,
-      logo: req.file ? req.file.path : null, // Save the file path if a logo is uploaded
-      manager,
+      name: JSON.parse(name),
+      logo: req.file ? req.file.filename : null, // Save the file path if a logo is uploaded
+      manager: Managersarray,
       currentPosition,
       currentPoints,
-      players: playerIds, // Array of player ObjectIds
+      players: playerIds,
+      stats : parsedStats,
     });
 
     res.status(201).json(team);
@@ -75,17 +71,36 @@ exports.getTeamById = async (req, res) => {
 // Update a team by ID (with optional logo upload)
 exports.updateTeam = async (req, res) => {
   try {
-    const { name, manager, currentPosition, currentPoints, players } = req.body;
+    const { name, manager, currentPosition, currentPoints, players, stats } = req.body;
+
+    // Split and trim player names
+    const playerNamesArray = players.split(",").map((name) => name.trim().replace(/['"]+/g, "")); // Remove extra quotes
+
+    // Split and trim manager names
+    const Managersarray = manager.split(",").map((name) => name.trim().replace(/['"]+/g, "")); // Remove extra quotes
+
+    // Find player IDs by names (case-insensitive)
+    const playerIds = await Promise.all(
+      playerNamesArray.map(async (playerName) => {
+        const player = await Player.findOne({ name: new RegExp(`^${playerName}$`, "i") });
+        if (!player) {
+          throw new Error(`Player not found: ${playerName}`);
+        }
+        return player._id; // Return the player's ObjectId
+      })
+    );
+    const parsedStats = typeof stats === "string" ? JSON.parse(stats) : stats;
 
     const team = await Team.findByIdAndUpdate(
       req.params.id,
       {
-        name,
-        logo: req.file ? req.file.path : undefined, // Update the logo path if a new file is uploaded
-        manager,
+        name: JSON.parse(name),
+        logo: req.file ? req.file.filename : undefined, // Update the logo path if a new file is uploaded
+        manager: Managersarray,
         currentPosition,
         currentPoints,
-        players,
+        players: playerIds,
+        stats: parsedStats,
       },
       { new: true, runValidators: true } // Return the updated team and run validators
     );
