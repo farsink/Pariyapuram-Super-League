@@ -11,12 +11,16 @@ exports.createPlayer = async (req, res) => {
       throw new Error(`Team not found: ${team}`);
     }
 
+    const parsedStats = typeof stats === "string" ? JSON.parse(stats) : stats;
+   
+
     // Create the player
     const player = await Player.create({
-      name,
+      image: req.file ? req.file.filename : null,
+      name ,
       position,
-      team: teamID._id,
-      stats,
+      team: teamID? teamID._id : null,
+      stats:parsedStats,
     });
 
     res.status(201).json(player);
@@ -51,10 +55,31 @@ exports.getPlayerById = async (req, res) => {
 // Update a player by ID
 exports.updatePlayer = async (req, res) => {
   try {
-    const player = await Player.findByIdAndUpdate(req.params.id, req.body, {
+    const { name, position, team, stats } = req.body;
+
+    let teamID = null;
+    if (team) {
+      const teamDoc = await Team.findOne({ name: new RegExp(`^${team}$`, "i") });
+      if (!teamDoc) {
+        throw new Error(`Team not found: ${team}`);
+      }
+      teamID = teamDoc._id;
+    }
+
+    const parsedStats = typeof stats === "string" ? JSON.parse(stats) : stats;
+
+    const updateData = {
+      name,
+      position,
+      team: teamID,
+      stats: parsedStats,
+    };
+
+    const player = await Player.findByIdAndUpdate(req.params.id, updateData, {
       new: true, // Return the updated player
       runValidators: true, // Validate the update data
     });
+
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
@@ -63,7 +88,6 @@ exports.updatePlayer = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-
 // Delete a player by ID
 exports.deletePlayer = async (req, res) => {
   try {
