@@ -1,167 +1,255 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Nav, Navbar, Form, Button, Dropdown, Card } from "react-bootstrap";
+import {
+  Home,
+  Calendar,
+  Users,
+  DollarSign,
+  Newspaper,
+  Play,
+  Ticket,
+  Settings,
+  Search,
+  Bell,
+  ChevronRight,
+  Menu,
+  X,
+  LogOut,
+  User,
+  Gavel,
+  Trophy,
+  ShieldHalf,
+} from "lucide-react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
 import styled from "styled-components";
-import { useUser, RedirectToSignIn } from "@clerk/clerk-react";
+import ProtectedAdminRoute from "../Middlewares/Protected.Jsx";
+import { Outlet, Link, Navigate } from "react-router-dom";
 
-function Admin() {
-  // protect The admin route
-  const { isSignedIn, user } = useUser();
-
-  if (!isSignedIn) {
-    return <RedirectToSignIn />;
-  }
-  if (user.publicMetadata.role !== "admin") {
-    return <p>You do not have access to this page.</p>;
+const Sidebar = styled.div`
+  .sidebar::-webkit-scrollbar {
+    width: 12px;
   }
 
-  //   sidebar toggle
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-  return (
-    <>
-      {" "}
-      <StyledWrapper>
-        <Container fluid className="dashboard-container">
-          <Navbar bg="dark" variant="dark" className="top-bar">
-            <Navbar.Brand>Dashboard</Navbar.Brand>
-            <Form inline>
-              <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
-            </Form>
-            <Button variant="outline-light" className="mr-2">
-            
-            </Button>
-            <Dropdown>
-              <Dropdown.Toggle variant="outline-light" id="dropdown-basic">
-                <img src="path_to_profile_picture.jpg" alt="Profile" className="profile-pic" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">Settings</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Logout</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Navbar>
-          <Row className="main-content">
-            <Col
-              xs={isSidebarOpen ? 3 : 1}
-              className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}
-            >
-              <Button variant="dark" onClick={toggleSidebar} className="toggle-button">
-                {isSidebarOpen ? "<" : ">"}
-              </Button>
-              <Nav className="flex-column">
-                <Nav.Link href="#home">Dashboard</Nav.Link>
-                <Nav.Link href="#fixtures">Fixtures</Nav.Link>
-                <Nav.Link href="#players">Players</Nav.Link>
-                <Nav.Link href="#bidding">Bidding</Nav.Link>
-                <Nav.Link href="#news">News</Nav.Link>
-                <Nav.Link href="#live-streaming">Live Streaming</Nav.Link>
-                <Nav.Link href="#tickets">Tickets</Nav.Link>
-                <Nav.Link href="#users">Users</Nav.Link>
-                <Nav.Link href="#settings">Settings</Nav.Link>
-              </Nav>
-            </Col>
-          
-          </Row>
-        </Container>
-      </StyledWrapper>
-    </>
-  );
-}
-
-const StyledWrapper = styled.div`
-  .dashboard-container {
-    padding: 0;
-    margin: 0;
-    height: 100vh;
+  .sidebar::-webkit-scrollbar-thumb {
+    background-color: #5c6ac4; /* indigo-600 */
+    border-radius: 6px;
   }
 
-  .top-bar {
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .main-content {
-    display: flex;
-    height: calc(100vh - 56px);
-  }
-
-  .sidebar {
-    background-color: #343a40;
-    color: white;
-    transition: width 0.3s;
-    overflow: hidden;
-  }
-
-  .sidebar.open {
-    width: 250px;
-  }
-
-  .sidebar.closed {
-    width: 60px;
-  }
-
-  .sidebar .nav-link {
-    color: white;
-  }
-
-  .sidebar .nav-link:hover {
-    background-color: #495057;
-  }
-
-  .toggle-button {
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .content {
-    padding: 20px;
-    background-color: #f8f9fa;
-  }
-
-  .stat-card,
-  .chart-card,
-  .profile-card {
-    margin-bottom: 20px;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .stat-card .card-title {
-    font-size: 14px;
-    color: #6c757d;
-  }
-
-  .stat-card .card-text {
-    font-size: 24px;
-    font-weight: bold;
-  }
-
-  .chart-card .card-title {
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .profile-card .card-title {
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  .profile-card .card-text {
-    font-size: 16px;
-    color: #6c757d;
-  }
-
-  .profile-pic {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+  .sidebar::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
   }
 `;
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+function Admin() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const navItems = [
+    { icon: Home, label: "Dashboard", to: "/admin" },
+    { icon: ShieldHalf, label: "Teams", to: "/admin/teams" },
+    { icon: Users, label: "Players", to: "/admin/players" },
+    { icon: Trophy, label: "Matches", to: "/admin/matches" },
+    { icon: DollarSign, label: "Bidding" },
+    { icon: Newspaper, label: "News" },
+    { icon: Play, label: "Live Streaming" },
+    { icon: Ticket, label: "Tickets" },
+    { icon: Users, label: "Users" },
+    { icon: Settings, label: "Settings" },
+  ];
+
+
+  return (
+    <ProtectedAdminRoute>
+      <div className="min-h-screen bg-gray-900 text-white flex">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          ></div>
+        )}
+
+        {/* Sidebar */}
+        <Sidebar>
+          <aside
+            className={`
+        fixed lg:sticky top-0 left-0 z-30
+        w-64 bg-gray-800 h-screen
+        flex flex-col
+        transform transition-transform duration-200 ease-in-out
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+      `}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <div className="flex items-center space-x-3">
+                <img src="../src/assets/psl-logo1.png" className="w-9 h-8" alt="" />
+                <span className="text-xl font-bold">Sports Admin</span>
+              </div>
+              <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex-1 sidebar overflow-y-auto py-4 px-4">
+              {navItems.map((item, index) => (
+                <Link
+                  key={index}
+                
+                  to={item.to}
+                  className={`
+                flex items-center space-x-3 px-4 py-3 rounded-lg mb-2 no-underline
+                ${
+                  item.active
+                    ? "bg-indigo-600 text-white"
+                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                }
+              `}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+          </aside>
+        </Sidebar>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          {/* Top Bar */}
+          <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center space-x-4">
+                <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>
+                  <Menu className="w-6 h-6" />
+                </button>
+                <div className="relative">
+                  <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search matches, players..."
+                    className="bg-gray-700 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {/* Notifications */}
+                <div className="relative">
+                  <button
+                    className="p-2 relative"
+                    onClick={() => {
+                      setNotificationsOpen(!notificationsOpen);
+                      setProfileOpen(false);
+                    }}
+                  >
+                    <Bell className="w-6 h-6 text-gray-400" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-indigo-600 rounded-full"></span>
+                  </button>
+
+                  {notificationsOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-700">
+                        <h3 className="font-semibold text-gray-200">Notifications</h3>
+                      </div>
+                      {[
+                        "New player registration request",
+                        "Upcoming match in 2 hours",
+                        "Ticket sales report available",
+                      ].map((notification, index) => (
+                        <a key={index} href="#" className="px-4 py-3 hover:bg-gray-700 block">
+                          <p className="text-sm text-gray-200">{notification}</p>
+                          <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Profile Dropdown */}
+                <div className="relative ">
+                  <button
+                    className="flex items-center space-x-3"
+                    onClick={() => {
+                      setProfileOpen(!profileOpen);
+                      setNotificationsOpen(false);
+                    }}
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="hidden md:inline-block text-white">Admin User</span>
+                    <ChevronRight
+                      className={`w-4 h-4 transform transition-transform ${
+                        profileOpen ? "rotate-90" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {profileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg py-2 z-50">
+                      <a
+                        href="#"
+                        className="px-4 py-2 text-white no-underline hover:bg-gray-700 flex items-center space-x-2"
+                      >
+                        <User className="w-4 h-4" />
+                        <span> Profile</span>
+                      </a>
+                      <a
+                        href="#"
+                        className="px-4 py-2 text-white no-underline hover:bg-gray-700 flex items-center space-x-2"
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Settings</span>
+                      </a>
+                      <div className="border-t border-gray-700 my-2"></div>
+                      <a
+                        href="#"
+                        className="px-4 py-2 hover:bg-gray-700 flex items-center no-underline space-x-2 text-red-400"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content Area */}
+          <main className="p-6">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </ProtectedAdminRoute>
+  );
+}
 
 export default Admin;
