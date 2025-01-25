@@ -1,4 +1,4 @@
-import React , { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import "../App.css";
 import styled from "styled-components";
@@ -10,19 +10,18 @@ import Overview from "../Components/Overview";
 import Fixture from "../Components/Fixture";
 import Results from "../Components/Results";
 import { useUser } from "@clerk/clerk-react";
-import { toast, ToastContainer,Slide } from "react-toastify";
-
+import { toast, ToastContainer, Slide } from "react-toastify";
 
 function Home() {
   const [key, setKey] = useState("overview");
   const { user } = useUser(); // Get user data from the context
 
-   useEffect(() => {
-     if (user) {
-       // Display a toast notification if the user is logged in
-       toast.success(`Logged in as ${user.username || user.primaryEmailAddress.emailAddress}`);
-     }
-   }, [user]);
+  useEffect(() => {
+    if (user) {
+      // Display a toast notification if the user is logged in
+      toast.success(`Logged in as ${user.username || user.primaryEmailAddress.emailAddress}`);
+    }
+  }, [user]);
 
   return (
     <>

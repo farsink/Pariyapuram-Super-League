@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { FaArrowLeft,FaFacebookF, FaGoogle } from "react-icons/fa";
+import { FaArrowLeft, FaFacebookF, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignIn, useSignUp, useAuth, useUser } from "@clerk/clerk-react";
 import { toast, ToastContainer, Slide } from "react-toastify";
 import { useUserContext } from "../context/UserContext";
-
-
+import { ArrowLeftCircle } from "lucide-react";
 
 function Auth({ isregister }) {
   const { signUp } = useSignUp();
@@ -22,7 +21,6 @@ function Auth({ isregister }) {
       if (clerkUser) {
         // Set user details in context
         setUser(clerkUser);
-       
 
         // Fetch and set the token in context
         const token = await getToken();
@@ -33,14 +31,11 @@ function Auth({ isregister }) {
     fetchData();
   }, [clerkUser, setUser, setToken, signIn]);
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
-
 
     if (!email || !password) {
       toast.error("Please fill in all fields");
@@ -91,15 +86,12 @@ function Auth({ isregister }) {
       <StyledWrapper>
         <Container fluid className="login-container">
           <Row className="login-row">
-            <Container>
-              <Link to={"/"}>
-                <Button variant="link" className="back-button">
-                  <FaArrowLeft /> BACK
-                </Button>
-              </Link>
-            </Container>
-
             <Col md={6} className="login-form-col">
+              <Container className="d-flex m-0 p-0">
+                <Button onClick={() => Navigate("/")} className="back-button">
+                  <ArrowLeftCircle />
+                </Button>
+              </Container>
               <h2 className="login-heading">{isregister ? "Sign Up" : "Log In"}</h2>
               <Form onSubmit={handleSubmit}>
                 <div id="clerk-captcha"></div>
@@ -126,7 +118,11 @@ function Auth({ isregister }) {
                 </Button>
                 <Container className="d-flex justify-content-between">
                   {!isregister && (
-                    <Button variant="link" className="forgot-password" onClick={() => Navigate("/resetPassword")}>
+                    <Button
+                      variant="link"
+                      className="forgot-password"
+                      onClick={() => Navigate("/resetPassword")}
+                    >
                       Forgot your password? Reset Password
                     </Button>
                   )}
@@ -158,7 +154,8 @@ function Auth({ isregister }) {
                   className="google-button"
                   onClick={handleGoogleSignIn}
                 >
-                  <FaGoogle /> Continue With Google
+                  <FaGoogle />
+                  Continue With Google
                 </Button>
                 <Button
                   variant="outline-light"
@@ -282,11 +279,14 @@ const StyledWrapper = styled.div`
 
   .google-button,
   .facebook-button {
-    width: 100%;
+  display: flex;
+    justify-content: center;
+align-items: center;
+  width: 100%;
     margin-bottom: 10px;
     color: white;
     border: 1px solid #555;
-    gap: 2px;
+    gap: 20px;
   }
   .google-button:hover {
     color: black;
