@@ -1,7 +1,7 @@
 // playerSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getPlayers } from "../../Api/ApiList";
+import { deletePlayerID, getPlayers, createPlayer, updatePlayer } from "../../Api/ApiList";
 
 const initialState = {
   players: [],
@@ -15,21 +15,21 @@ export const fetchPlayers = createAsyncThunk("players/fetchPlayers", async () =>
   return response.data;
 });
 
-export const createPlayer = createAsyncThunk("players/createPlayer", async (playerData) => {
-  const response = await axios.post("/api/players", playerData);
+export const createPlayerAsyncThunk = createAsyncThunk("players/createPlayer", async (playerData) => {
+  const response = await createPlayer(playerData);
   return response.data;
 });
 
-export const updatePlayer = createAsyncThunk(
+export const updatePlayerAsyncThunk = createAsyncThunk(
   "players/updatePlayer",
   async ({ id, updatedData }) => {
-    const response = await axios.patch(`/api/players/${id}`, updatedData);
+    const response = await updatePlayer(id, updatedData);
     return response.data;
   }
 );
 
 export const deletePlayer = createAsyncThunk("players/deletePlayer", async (playerId) => {
-  await axios.delete(`/api/players/${playerId}`);
+  await deletePlayerID(playerId);
   return playerId;
 });
 
@@ -53,12 +53,12 @@ const playerSlice = createSlice({
       })
 
       // Create Player
-      .addCase(createPlayer.fulfilled, (state, action) => {
+      .addCase(createPlayerAsyncThunk.fulfilled, (state, action) => {
         state.players.push(action.payload);
       })
 
       // Update Player
-      .addCase(updatePlayer.fulfilled, (state, action) => {
+      .addCase(updatePlayerAsyncThunk.fulfilled, (state, action) => {
         const index = state.players.findIndex((player) => player._id === action.payload._id);
         if (index !== -1) {
           state.players[index] = action.payload;

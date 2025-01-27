@@ -32,6 +32,7 @@ import {
   Legend,
 } from "chart.js";
 
+
 import styled from "styled-components";
 import ProtectedAdminRoute from "../Middlewares/Protected.Jsx";
 import { Outlet, Link, Navigate } from "react-router-dom";
@@ -81,7 +82,6 @@ function Admin() {
     { icon: Settings, label: "Settings" },
   ];
 
-
   return (
     <ProtectedAdminRoute>
       <div className="min-h-screen bg-gray-900 text-white flex">
@@ -118,7 +118,6 @@ function Admin() {
               {navItems.map((item, index) => (
                 <Link
                   key={index}
-                
                   to={item.to}
                   className={`
                 flex items-center space-x-3 px-4 py-3 rounded-lg mb-2 no-underline

@@ -9,7 +9,6 @@ export const getTeams = async () => {
   return await response;
 };
 
-
 //add team
 
 export const addTeam = async (formData) => {
@@ -40,11 +39,40 @@ export const updateTeam = async (teamId, formData) => {
 };
 
 //Player API'S
-{" "}
+{
+  (" ");
+}
 
 // fetch all players
 export const getPlayers = async () => {
   const response = await AxiosConfig(`${serverurl}/api/player/getAll`, "GET", null, null);
 
   return await response;
+};
+// create a new player
+
+export const createPlayer = async (formData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/player/create`,
+    "POST",
+    {}, // Empty headers object
+    formData // Send FormData directly
+  );
+  return response;
+};
+// Delete By id
+export const deletePlayerID = async (playerId) => {
+  const response = await AxiosConfig(`${serverurl}/api/player/${playerId}`, "DELETE");
+  return await response;
+};
+//update player by id
+
+export const updatePlayer = async (playerId, formData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/player/${playerId}`,
+    "PUT",
+    {}, // Empty headers object
+    formData // Send FormData directly
+  );
+  return response;
 };

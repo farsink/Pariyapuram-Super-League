@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, Edit, Trash2, Plus } from "lucide-react";
 import styled from "styled-components";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchPlayers,
   selectAllPlayers,
   getPlayersStatus,
   getPlayersError,
+  deletePlayer,
+  createPlayerAsyncThunk,
+  updatePlayerAsyncThunk,
 } from "../../Redux/slices/PlayerSlice";
+import showConfirmDeleteToast from "../Customs/Toastdelete";
 
 const PlayersContainer = styled.div`
   .player-form {
@@ -36,54 +39,61 @@ function PlayersManagement() {
   const [editingPlayer, setEditingPlayer] = useState(null);
 
   const dispatch = useDispatch();
-   const { players, status, error } = useSelector((state) => state.players);
+  const players = useSelector(selectAllPlayers);
+  const status = useSelector(getPlayersStatus);
+  const error = useSelector(getPlayersError);
 
   useEffect(() => {
     dispatch(fetchPlayers());
   }, [dispatch]);
-  console.log(players);
+
+  if (status === "failed") {
+    return <div>Error: {error}</div>;
+  }
   
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const photo = formData.get("photo");
 
-    // Validate photo type and size
-    if (!photo.type.includes("image")) {
-      alert("Invalid photo format. Please upload a JPEG or PNG image.");
-      return;
-    }
-
-    if (photo.size > 5 * 1024 * 1024) {
-      alert("Image size is too large. Please upload an image less than 5MB.");
-      return; 
-    }
-    
-    // Create player object from form data
-    const playerData = {
-      name: formData.get("name"),
-      position: formData.get("position"),
-      team: formData.get("team"),
-      stats: {
+    try {
+      // 1. Create stats object from form inputs
+      const stats = {
         goals: parseInt(formData.get("goals")),
         assists: parseInt(formData.get("assists")),
-      },
-      photo:photo
-    };
+        // Add other stats if needed
+      };
 
-    if (editingPlayer) {
-      setPlayers(players.map((p) => (p.id === editingPlayer.id ? playerData : p)));
-    } else {
-      setPlayers([...players, playerData]);
+      // 2. Prepare FormData for backend
+      const data = new FormData();
+      data.append("name", formData.get("name"));
+      data.append("position", formData.get("position"));
+      data.append("team", formData.get("team")); // Team name (backend will convert to ID)
+      data.append("stats", JSON.stringify(stats)); // Stringify nested object
+      data.append("photo", formData.get("photo")); // Append the file
+
+      // 3. Dispatch action
+      if (editingPlayer) {
+        await dispatch(updatePlayerAsyncThunk({ id: editingPlayer._id, updatedData: data })).unwrap();
+      } else {
+        await dispatch(createPlayerAsyncThunk(data)).unwrap();
+      }
+
+      // 4. Reset form
+      setShowForm(false);
+      setEditingPlayer(null);
+    } catch (error) {
+      alert(`Operation failed: ${error.message}`);
     }
-
-    setShowForm(false);
-    setEditingPlayer(null);
   };
 
   const handleDelete = (id) => {
-    setPlayers(players.filter((p) => p.id !== id));
+    // Delete player logic here
+    try {
+      dispatch(deletePlayer(id)).unwrap();
+    } catch (error) {
+      alert(`Operation failed: ${error.message}`);
+    }
   };
 
   return (
@@ -94,7 +104,10 @@ function PlayersManagement() {
           <p className="text-gray-400">Manage tournament players and details</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            setEditingPlayer(null);
+          }}
           className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2"
         >
           <Plus size={18} />
@@ -124,7 +137,6 @@ function PlayersManagement() {
                   name="position"
                   defaultValue={editingPlayer?.position}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
                 />
               </div>
             </div>
@@ -134,9 +146,8 @@ function PlayersManagement() {
                 <label className="block text-sm text-gray-300 mb-2">Team</label>
                 <input
                   name="team"
-                  defaultValue={editingPlayer?.team}
+                  defaultValue={editingPlayer?.team.name}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
                 />
               </div>
               <div>
@@ -145,7 +156,6 @@ function PlayersManagement() {
                   name="photo"
                   defaultValue={editingPlayer?.photo}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
                 />
               </div>
             </div>
@@ -158,7 +168,6 @@ function PlayersManagement() {
                   type="number"
                   defaultValue={editingPlayer?.stats.goals}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
                 />
               </div>
               <div>
@@ -168,7 +177,6 @@ function PlayersManagement() {
                   type="number"
                   defaultValue={editingPlayer?.stats.assists}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
                 />
               </div>
             </div>
@@ -195,41 +203,54 @@ function PlayersManagement() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {players.map((player) => (
-          <div key={player._id} className="player-card p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <img src={player.photo} alt={player.name} className="w-16 h-16 rounded-full" />
-              <div>
-                <h3 className="text-lg font-semibold text-white">{player.name}</h3>
-                <p className="text-sm text-gray-400">{player.position}</p>
+      {status === "loading" ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          {players &&<p className="text-gray-400">Total players : {players?.length}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {players?.map((player) => (
+              <div key={player._id} className="player-card p-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <img src={player.photo} alt={player.name} className="w-16 h-16 rounded-full" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">{player.name}</h3>
+                    <p className="text-sm text-gray-400">{player.position}</p>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-400 space-y-2">
+                  <p>Team: {player.team?.name || "No Team"}</p>
+                  <p>Goals: {player.stats.goals}</p>
+                  <p>Assists: {player.stats.assists}</p>
+                </div>
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    onClick={() => {
+                      setEditingPlayer(player);
+                      setShowForm(true);
+                    }}
+                    className="text-indigo-400 hover:text-indigo-300"
+                  >
+                    <Edit size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(player._id)}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="text-sm text-gray-400 space-y-2">
-              <p>Team: {player.team}</p>
-              <p>Goals: {player.stats.goals}</p>
-              <p>Assists: {player.stats.assists}</p>
-            </div>
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => {
-                  setEditingPlayer(player);
-                  setShowForm(true);
-                }}
-                className="text-indigo-400 hover:text-indigo-300"
-              >
-                <Edit size={18} />
-              </button>
-              <button
-                onClick={() => handleDelete(player._id)}
-                className="text-red-400 hover:text-red-300"
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+      {!players && (
+        <div>
+          {" "}
+          <p className="text-red-500">An error occurred</p>
+        </div>
+      )}
     </PlayersContainer>
   );
 }

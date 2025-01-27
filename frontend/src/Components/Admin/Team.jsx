@@ -99,9 +99,6 @@ function TeamsManagement() {
       })
     );
 
-for (let [key, value] of apiFormData.entries()) {
-  console.log(`${key}: ${value}`);
-}
 
 
   try {
@@ -224,7 +221,7 @@ for (let [key, value] of apiFormData.entries()) {
                       name="players"
                       defaultValue={editingTeam?.players.map((player) => player.name).join(",")}
                       className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      required
+                      
                     />
                   </div>
                   <div>
