@@ -221,7 +221,6 @@ function TeamsManagement() {
                       name="players"
                       defaultValue={editingTeam?.players.map((player) => player.name).join(",")}
                       className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      
                     />
                   </div>
                   <div>
@@ -371,14 +370,6 @@ function TeamsManagement() {
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Players</h3>
-                  <ul className="space-y-2">
-                    {selectedTeam.players.map((player, index) => (
-                      <li key={index} className="text-gray-400">
-                        {player.name}
-                      </li>
-                    ))}
-                  </ul>
                   <h3 className="text-xl font-semibold text-white mb-2">Managers</h3>
                   <ul className="list-none list-inside">
                     {selectedTeam.manager?.map((manager, index) => (
@@ -387,6 +378,22 @@ function TeamsManagement() {
                       </li>
                     ))}
                   </ul>
+                  <h3 className="text-xl font-semibold text-white mb-4">Players</h3>
+                  <div className="overflow-y-auto" style={{ height: "calc(100vh - 500px)" }}>
+                    <ul className="space-y-2">
+                      {selectedTeam.players.map((player, index) => (
+                        <li key={index} className="text-gray-400">
+                          {player.name}
+                        </li>
+                      ))}
+
+                      {selectedTeam.players.slice(4).map((player, index) => (
+                        <li key={index} className="text-gray-400">
+                          {player.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
                 <div className="mt-4"></div>
               </div>

@@ -11,7 +11,6 @@ import {
   createPlayerAsyncThunk,
   updatePlayerAsyncThunk,
 } from "../../Redux/slices/PlayerSlice";
-import showConfirmDeleteToast from "../Customs/Toastdelete";
 
 const PlayersContainer = styled.div`
   .player-form {
@@ -95,6 +94,14 @@ function PlayersManagement() {
       alert(`Operation failed: ${error.message}`);
     }
   };
+   const groupedPlayers = players.reduce((acc, player) => {
+     const team = player.team?.name || "No Team";
+     if (!acc[team]) {
+       acc[team] = [];
+     }
+     acc[team].push(player);
+     return acc;
+   }, {});
 
   return (
     <PlayersContainer>
@@ -207,42 +214,55 @@ function PlayersManagement() {
         <div>Loading...</div>
       ) : (
         <>
-          {players &&<p className="text-gray-400">Total players : {players?.length}</p>}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {players?.map((player) => (
-              <div key={player._id} className="player-card p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <img src={player.photo} alt={player.name} className="w-16 h-16 rounded-full" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">{player.name}</h3>
-                    <p className="text-sm text-gray-400">{player.position}</p>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-400 space-y-2">
-                  <p>Team: {player.team?.name || "No Team"}</p>
-                  <p>Goals: {player.stats.goals}</p>
-                  <p>Assists: {player.stats.assists}</p>
-                </div>
-                <div className="flex justify-end gap-3 mt-4">
-                  <button
-                    onClick={() => {
-                      setEditingPlayer(player);
-                      setShowForm(true);
-                    }}
-                    className="text-indigo-400 hover:text-indigo-300"
-                  >
-                    <Edit size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(player._id)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+          {Object.keys(groupedPlayers)
+            .sort()
+            .map((team) => (
+              <div key={team}>
+                <h2 className="text-xl font-semibold text-white mb-4">{team}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {groupedPlayers[team]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((player) => (
+                      <div key={player._id} className="player-card p-6">
+                        <div className="flex items-center space-x-4 mb-4">
+                          <img
+                            src={player.photo}
+                            alt={player.name}
+                            className="w-16 h-16 rounded-full"
+                          />
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">{player.name}</h3>
+                            <p className="text-sm text-gray-400">{player.position}</p>
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-400 space-y-2">
+                          <p>Team: {player.team?.name || "No Team"}</p>
+                          <p>Goals: {player.stats.goals}</p>
+                          <p>Assists: {player.stats.assists}</p>
+                        </div>
+                        <div className="flex justify-end gap-3 mt-4">
+                          <button
+                            onClick={() => {
+                              setEditingPlayer(player);
+                              setShowForm(true);
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className="text-indigo-400 hover:text-indigo-300"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(player._id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}
-          </div>
         </>
       )}
       {!players && (

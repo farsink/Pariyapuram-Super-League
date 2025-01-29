@@ -18,6 +18,7 @@ import Dashboard from "./Components/Admin/Dashboard";
 import PlayersManagement from "./Components/Admin/Players";
 import MatchesManagement from "./Components/Admin/Matches";
 import TeamsManagement from "./Components/Admin/Team";
+import TestNavbar from "./Components/TestNavbar";
 
 function App() {
   const location = useLocation();
@@ -26,7 +27,8 @@ function App() {
   return (
     <>
       <UserProvider>
-        {!isAdminRoute && <Navbarpsl />}
+        <TestNavbar/>
+        {/* {!isAdminRoute && <Navbarpsl />} */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Home />} />

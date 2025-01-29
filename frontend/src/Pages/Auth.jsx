@@ -7,6 +7,7 @@ import { useSignIn, useSignUp, useAuth, useUser } from "@clerk/clerk-react";
 import { toast, ToastContainer, Slide } from "react-toastify";
 import { useUserContext } from "../context/UserContext";
 import { ArrowLeftCircle } from "lucide-react";
+import "../bootstrap.min.css";
 
 function Auth({ isregister }) {
   const { signUp } = useSignUp();
@@ -279,10 +280,10 @@ const StyledWrapper = styled.div`
 
   .google-button,
   .facebook-button {
-  display: flex;
+    display: flex;
     justify-content: center;
-align-items: center;
-  width: 100%;
+    align-items: center;
+    width: 100%;
     margin-bottom: 10px;
     color: white;
     border: 1px solid #555;
@@ -306,7 +307,7 @@ align-items: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("./src/assets/hhholographic.webp") no-repeat center center;
+    background: url("../src/assets/hhholographic.webp") no-repeat center center;
     border-radius: 10px;
     background-size: cover;
     position: relative;

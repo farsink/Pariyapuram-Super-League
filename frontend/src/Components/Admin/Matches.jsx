@@ -69,14 +69,23 @@ function MatchesManagement() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const ScoreHome = formData.get("score").split("-")[0];
+    const ScoreAway = formData.get("score").split("-")[1];
+    const Wonteam = ScoreHome > ScoreAway ? formData.get("homeTeam") : formData.get("awayTeam");
+    const goalScorers = [{
+    }];
+
+    
     const matchData = {
-      id: editingMatch ? editingMatch.id : matches.length + 1,
       date: formData.get("date"),
       homeTeam: formData.get("homeTeam"),
       awayTeam: formData.get("awayTeam"),
       round: formData.get("round"),
-      score: formData.get("score"),
+      homeGoals: ScoreHome,
+      awayGoals: ScoreAway,
+      wonTeam: Wonteam,
       status: formData.get("status"),
+      goalScorers:[],
     };
 
     if (editingMatch) {
@@ -163,31 +172,76 @@ function MatchesManagement() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Score (Home-Away)</label>
-                <input
-                  name="score"
-                  placeholder="e.g., 2-1"
-                  defaultValue={editingMatch?.score}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Status</label>
-                <select
-                  name="status"
-                  defaultValue={editingMatch?.status}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                >
-                  <option value="scheduled">Scheduled</option>
-                  <option value="ongoing">Ongoing</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-            </div>
+            {editingMatch && (
+              <>
+                {" "}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Score (Home-Away)</label>
+                    <input
+                      name="score"
+                      placeholder="e.g., 2-1"
+                      defaultValue={editingMatch?.score}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Status</label>
+                    <select
+                      name="status"
+                      defaultValue={editingMatch?.status}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    >
+                      <option value="scheduled">Scheduled</option>
+                      <option value="ongoing">Ongoing</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">
+                      Home Team Goal Scorers
+                    </label>
+                    <input
+                      name="homeTeamGoalScorers"
+                      defaultValue={editingMatch?.homeTeamGoalScorers}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">
+                      Away Team Goal Scorers
+                    </label>
+                    <input
+                      name="awayTeamGoalScorers"
+                      defaultValue={editingMatch?.awayTeamGoalScorers}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Yellow Cards</label>
+                    <input
+                      name="YellowCards"
+                      defaultValue={editingMatch?.YellowCards}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">RedCards</label>
+                    <input
+                      name="RedCards"
+                      defaultValue={editingMatch?.redcards}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="flex justify-end gap-3 mt-6">
               <button

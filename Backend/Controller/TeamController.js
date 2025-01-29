@@ -7,7 +7,7 @@ const processTeamData = async (req) => {
   const { name, manager, currentPosition, currentPoints, players, stats } = req.body;
 
   const playerNamesArray = players
-    ? players.split(",").map((name) => name.trim().replace(/['"]+/g, ""))
+    ? players.split(",").map((name) => name.trim().replace(/['"]+/g, "").trim())
     : []; // Remove extra quotes
 
   // Split and trim manager names
@@ -28,7 +28,7 @@ const processTeamData = async (req) => {
 
   return {
     name: JSON.parse(name),
-    logo: req.file ? req.file.filename : null, // Save the file path if a logo is uploaded
+    logo: req.file ? req.file.filename :null, // Save the file path if a logo is uploaded
     manager: Managersarray,
     currentPosition,
     currentPoints,
@@ -77,11 +77,27 @@ exports.getTeamById = async (req, res) => {
 // Update a team by ID (with optional logo upload)
 exports.updateTeam = async (req, res) => {
   try {
-    const teamData = await processTeamData(req);
-    const team = await Team.findByIdAndUpdate(req.params.id, teamData, { new: true });
-    if (!team) {
+    const teamData = await processTeamData(req); // Logo is set here based on req.file
+
+    const existingTeam = await Team.findById(req.params.id);
+    if (!existingTeam) {
       return res.status(404).json({ message: "Team not found" });
     }
+
+    // If no new logo is uploaded, retain the existing logo
+    if (!req.file) {
+      teamData.logo = existingTeam.logo;
+    } else {
+      // If a new logo is uploaded, delete the old logo file
+      if (existingTeam.logo) {
+        const oldLogoPath = path.join(__dirname, "../uploads", existingTeam.logo);
+        fs.unlink(oldLogoPath, (err) => {
+          if (err) console.error("Failed to delete old logo:", err);
+        });
+      }
+    }
+
+    const team = await Team.findByIdAndUpdate(req.params.id, teamData, { new: true });
     res.status(200).json(team);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -1,5 +1,7 @@
 const Match = require("../Models/Match");
+const Player = require("../Models/Player");
 const Team = require("../Models/Team");
+const { updatePlayerStats, updateTeamStats } = require("./HelperControls");
 
 // Create a new match
 exports.createMatch = async (req, res) => {
@@ -37,7 +39,11 @@ exports.getAllMatches = async (req, res) => {
   try {
     const matches = await Match.find()
       .populate("homeTeam", "name") // Populate home team name
-      .populate("awayTeam", "name"); // Populate away team name
+      .populate("awayTeam", "name")
+      .populate({
+        path: "goalScorers.player",
+        select: "name",
+      }); // Populate away team name
     res.status(200).json(matches);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -61,45 +67,18 @@ exports.getMatchById = async (req, res) => {
 
 // Update a match by ID
 exports.updateMatch = async (req, res) => {
+  const { homeGoals, awayGoals, goalScorers, cards, status } = req.body;
   try {
-    const { date, homeTeamName, awayTeamName, score, status, round } = req.body;
-
-    let homeTeamId, awayTeamId;
-
-    // Find home team by name (if provided)
-    if (homeTeamName) {
-      const homeTeam = await Team.findOne({ name: new RegExp(`^${homeTeamName}$`, "i") });
-      if (!homeTeam) {
-        throw new Error(`Home team not found: ${homeTeamName}`);
-      }
-      homeTeamId = homeTeam._id;
-    }
-
-    // Find away team by name (if provided)
-    if (awayTeamName) {
-      const awayTeam = await Team.findOne({ name: new RegExp(`^${awayTeamName}$`, "i") });
-      if (!awayTeam) {
-        throw new Error(`Away team not found: ${awayTeamName}`);
-      }
-      awayTeamId = awayTeam._id;
-    }
-
     const match = await Match.findByIdAndUpdate(
       req.params.id,
-      {
-        date,
-        homeTeam: homeTeamId, // Update home team reference (if provided)
-        awayTeam: awayTeamId, // Update away team reference (if provided)
-        score,
-        status,
-        round,
-      },
-      { new: true, runValidators: true } // Return the updated match and run validators
+      { homeGoals, awayGoals, goalScorers, cards, status },
+      { new: true }
     );
 
-    if (!match) {
-      return res.status(404).json({ message: "Match not found" });
-    }
+    // Update player and team stats
+    await updatePlayerStats(goalScorers, cards);
+    await updateTeamStats(match.homeTeam, match.awayTeam, homeGoals, awayGoals);
+
     res.status(200).json(match);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -118,3 +97,4 @@ exports.deleteMatch = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+

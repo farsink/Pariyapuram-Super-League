@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css"
-import "./bootstrap.min.css";
+// import "./bootstrap.min.css";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { UserProvider } from "./context/UserContext.jsx";
 import { Provider } from "react-redux";
