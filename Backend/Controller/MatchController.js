@@ -38,8 +38,22 @@ exports.createMatch = async (req, res) => {
 exports.getAllMatches = async (req, res) => {
   try {
     const matches = await Match.find()
-      .populate("homeTeam", "name") // Populate home team name
-      .populate("awayTeam", "name")
+      .populate({
+        path: "homeTeam",
+        select: "name logo players",
+        populate: {
+          path: "players",
+          select: "name",
+        },
+      }) // Populate home team name
+      .populate({
+        path: "awayTeam",
+        select: "name logo players",
+        populate: {
+          path: "players",
+          select: "name",
+        },
+      })
       .populate({
         path: "goalScorers.player",
         select: "name",
@@ -67,11 +81,11 @@ exports.getMatchById = async (req, res) => {
 
 // Update a match by ID
 exports.updateMatch = async (req, res) => {
-  const { homeGoals, awayGoals, goalScorers, cards, status } = req.body;
+  const { homeGoals, awayGoals, goalScorers, cards , wonTeam } = req.body;
   try {
     const match = await Match.findByIdAndUpdate(
       req.params.id,
-      { homeGoals, awayGoals, goalScorers, cards, status },
+      { homeGoals, awayGoals, goalScorers, cards, status : "completed", wonTeam },
       { new: true }
     );
 

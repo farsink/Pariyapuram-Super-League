@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, Home, LucideGoal, Edit, Trash2, Plus, Clock, Trophy, Goal } from "lucide-react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { addMatchAsync, fetchMatches, updateMatchAsync } from "../../Redux/slices/MatchSlice";
+import { serverurl } from "../../Api/ServerURL";
 
 const MatchesContainer = styled.div`
   .match-form {
@@ -43,64 +46,160 @@ const MatchesContainer = styled.div`
 `;
 
 function MatchesManagement() {
+  const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
-  const [matches, setMatches] = useState([
-    {
-      id: 1,
-      date: "2024-03-25",
-      homeTeam: "Team Alpha",
-      awayTeam: "Team Beta",
-      round: "Quarter Final",
-      score: "2-1",
-      status: "completed",
-    },
-    {
-      id: 2,
-      date: "2024-04-01",
-      homeTeam: "Team Gamma",
-      awayTeam: "Team Delta",
-      round: "Semi Final",
-      score: "0-0",
-      status: "scheduled",
-    },
-  ]);
+  const { matches, status, error } = useSelector((state) => state.matches);
+  const [selectedHomeScorers, setSelectedHomeScorers] = useState([]);
+  const [selectedAwayScorers, setSelectedAwayScorers] = useState([]);
+  const [selectedYellowCards, setSelectedYellowCards] = useState([]);
+  const [selectedRedCards, setSelectedRedCards] = useState([]);
+  const [score, setScore] = useState({ home: 0, away: 0 });
+  // Add a goal scorer to the respective team's list
+  const addGoalScorer = (team, playerName) => {
+    if (!playerName) return; // Prevent adding empty values
+    if (team === "home") {
+      setSelectedHomeScorers((prev) => [...prev, playerName]);
+      setScore((prev) => ({ ...prev, home: prev.home + 1 }));
+    } else if (team === "away") {
+      setSelectedAwayScorers((prev) => [...prev, playerName]);
+      setScore((prev) => ({ ...prev, away: prev.away + 1 }));
+    }
+  };
 
-  const handleSubmit = (e) => {
+  // Remove a goal scorer from the respective team's list
+  const removeGoalScorer = (team, index) => {
+    if (team === "home") {
+      setSelectedHomeScorers((prev) => prev.filter((_, i) => i !== index));
+      setScore((prev) => ({ ...prev, home: prev.home - 1 }));
+    } else if (team === "away") {
+      setSelectedAwayScorers((prev) => prev.filter((_, i) => i !== index));
+      setScore((prev) => ({ ...prev, away: prev.away - 1 }));
+    }
+  };
+  const addCard = (cardType, playerName) => {
+    if (!playerName) return; // Prevent adding empty values
+    if (cardType === "yellow") {
+      setSelectedYellowCards((prev) => [...prev, playerName]);
+    } else if (cardType === "red") {
+      setSelectedRedCards((prev) => [...prev, playerName]);
+    }
+  };
+
+  // Remove a card (yellow or red) from the respective list
+  const removeCard = (cardType, index) => {
+    if (cardType === "yellow") {
+      setSelectedYellowCards((prev) => prev.filter((_, i) => i !== index));
+    } else if (cardType === "red") {
+      setSelectedRedCards((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleScoreChange = (team, value) => {
+    setScore((prevScore) => ({
+      ...prevScore,
+      [team]: value,
+    }));
+  };
+  useEffect(() => {
+    dispatch(fetchMatches());
+  }, [dispatch]);
+
+  console.log("fetchedData :", matches);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const ScoreHome = formData.get("score").split("-")[0];
-    const ScoreAway = formData.get("score").split("-")[1];
-    const Wonteam = ScoreHome > ScoreAway ? formData.get("homeTeam") : formData.get("awayTeam");
-    const goalScorers = [{
-    }];
 
-    
+    // Extract form data
+    const date = new Date(formData.get("date")).toISOString();
+    const homeTeamName = formData.get("homeTeam");
+    const awayTeamName = formData.get("awayTeam");
+    const round = formData.get("round");
+    const status = formData.get("status");
+
+    // Construct goal scorers array
+    const goalScorers = [
+      ...selectedHomeScorers.map((scorer) => ({
+        player: hometeamplayers.find((p) => p.name === scorer)?._id || null,
+        team: editingMatch?.homeTeam?._id,
+      })),
+      ...selectedAwayScorers.map((scorer) => ({
+        player: awayteamplayers.find((p) => p.name === scorer)?._id || null,
+        team: editingMatch?.awayTeam?._id,
+      })),
+    ];
+
+    // Construct cards array
+    const cards = [
+      ...selectedYellowCards.map((player) => ({
+        player:
+          [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?._id || null,
+        team: [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?.team || null,
+        cardType: "yellow",
+      })),
+      ...selectedRedCards.map((player) => ({
+        player:
+          [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?._id || null,
+        team: [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?.team || null,
+        cardType: "red",
+      })),
+    ];
+
+    // Determine the winning team
+    const Wonteam =
+      score.home > score.away
+        ? editingMatch?.homeTeam?._id
+        : score.away > score.home
+        ? editingMatch?.awayTeam?._id
+        : "TIED";
+
+    // Construct the match data object
     const matchData = {
-      date: formData.get("date"),
-      homeTeam: formData.get("homeTeam"),
-      awayTeam: formData.get("awayTeam"),
-      round: formData.get("round"),
-      homeGoals: ScoreHome,
-      awayGoals: ScoreAway,
+      date,
+      homeTeamName,
+      awayTeamName,
+      round,
+      homeGoals: score.home,
+      awayGoals: score.away,
       wonTeam: Wonteam,
-      status: formData.get("status"),
-      goalScorers:[],
+      status,
+      goalScorers: goalScorers.filter((scorer) => scorer.player !== null),
+      cards: cards.filter((card) => card.player !== null),
     };
 
-    if (editingMatch) {
-      setMatches(matches.map((m) => (m.id === editingMatch.id ? matchData : m)));
-    } else {
-      setMatches([...matches, matchData]);
+    try {
+      if (editingMatch) {
+        // Update an existing match
+        await dispatch(updateMatchAsync({ id: editingMatch._id, matchData }));
+      } else {
+        // Create a new match
+        await dispatch(addMatchAsync(matchData));
+      }
+      dispatch(fetchMatches()); // Refresh matches list
+      setShowForm(false);
+      setEditingMatch(null);
+    } catch (error) {
+      console.error(error);
     }
-
-    setShowForm(false);
-    setEditingMatch(null);
   };
 
   const handleDelete = (id) => {
-    setMatches(matches.filter((m) => m.id !== id));
+    setMatches(matches.filter((m) => m._id !== id));
   };
+
+  const handlereset = () => {
+    setEditingMatch(null);
+    setScore({ home: 0, away: 0 });
+    setSelectedHomeScorers([]);
+    setSelectedAwayScorers([]);
+    setSelectedYellowCards([]);
+    setSelectedRedCards([]);
+    setShowForm(false);
+  };
+
+  const hometeamplayers = editingMatch?.homeTeam?.players || [];
+  const awayteamplayers = editingMatch?.awayTeam?.players || [];
 
   return (
     <MatchesContainer>
@@ -124,120 +223,281 @@ function MatchesManagement() {
             {editingMatch ? "Edit Match" : "New Match"}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  defaultValue={editingMatch?.date}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Round</label>
-                <select
-                  name="round"
-                  defaultValue={editingMatch?.round}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                >
-                  <option value="Group Stage">Group Stage</option>
-                  <option value="Quarter Final">Quarter Final</option>
-                  <option value="Semi Final">Semi Final</option>
-                  <option value="Final">Final</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Home Team</label>
-                <input
-                  name="homeTeam"
-                  defaultValue={editingMatch?.homeTeam}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-300 mb-2">Away Team</label>
-                <input
-                  name="awayTeam"
-                  defaultValue={editingMatch?.awayTeam}
-                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                  required
-                />
-              </div>
-            </div>
-
-            {editingMatch && (
+            {!editingMatch && (
               <>
-                {" "}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">Score (Home-Away)</label>
+                    <label className="block text-sm text-gray-300 mb-2">Date</label>
                     <input
-                      name="score"
-                      placeholder="e.g., 2-1"
-                      defaultValue={editingMatch?.score}
+                      type="date"
+                      name="date"
                       className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">Status</label>
+                    <label className="block text-sm text-gray-300 mb-2">Round</label>
                     <select
-                      name="status"
-                      defaultValue={editingMatch?.status}
+                      name="round"
                       className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
                       required
                     >
-                      <option value="scheduled">Scheduled</option>
-                      <option value="ongoing">Ongoing</option>
-                      <option value="completed">Completed</option>
+                      <option value="Group Stage">Group Stage</option>
+                      <option value="Quarter Final">Quarter Final</option>
+                      <option value="Semi Final">Semi Final</option>
+                      <option value="Final">Final</option>
                     </select>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Home Team</label>
+                    <input
+                      name="homeTeam"
+                      defaultValue={editingMatch?.homeTeam.name}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Away Team</label>
+                    <input
+                      name="awayTeam"
+                      defaultValue={editingMatch?.awayTeam.name}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {editingMatch && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Date</label>
+                    <input
+                      type="date"
+                      name="date"
+                      defaultValue={new Date(editingMatch.date).toISOString().split("T")[0]}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Round</label>
+                    <select
+                      name="round"
+                      defaultValue={editingMatch.round}
+                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      required
+                    >
+                      <option value="Group Stage">Group Stage</option>
+                      <option value="Quarter Final">Quarter Final</option>
+                      <option value="Semi Final">Semi Final</option>
+                      <option value="Final">Final</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* score */}
+
+                <label className="block text-sm text-gray-300 mb-2">Score</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center">
+                    <img
+                      src={`${serverurl}/uploads/${editingMatch.homeTeam.logo}`}
+                      alt={editingMatch.homeTeam.name}
+                      className="w-8 h-8 mr-2 rounded-full"
+                    />
+                    <div className="flex items-center">
+                      <input
+                        type="number"
+                        name="homeScore"
+                        min="0"
+                        defaultValue={editingMatch?.homeGoals}
+                        value={score.home}
+                        onChange={(e) => handleScoreChange("home", parseInt(e.target.value))}
+                        className="w-30 text-white-950 bg-transparent rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 text-center"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="flex items-center">
+                      <input
+                        type="number"
+                        name="awayScore"
+                        min="0"
+                        value={score.away}
+                        onChange={(e) => handleScoreChange("away", parseInt(e.target.value))}
+                        className="w-30t text-white-950 bg-transparent rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 text-center"
+                      />
+                    </div>
+                    <img
+                      src={`${serverurl}/uploads/${editingMatch.awayTeam.logo}`}
+                      alt={editingMatch.awayTeam.name}
+                      className="w-8 h-8 ml-2 rounded-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Goal Scorers Entry */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Home Team Goal Scorers */}
                   <div>
                     <label className="block text-sm text-gray-300 mb-2">
                       Home Team Goal Scorers
                     </label>
-                    <input
-                      name="homeTeamGoalScorers"
-                      defaultValue={editingMatch?.homeTeamGoalScorers}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                    />
+                    <div className="relative">
+                      <select
+                        name="homeGoalScorers"
+                        onChange={(e) => addGoalScorer("home", e.target.value)}
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      >
+                        <option value="">Select Player</option>
+                        {hometeamplayers.map((player) => (
+                          <option key={player._id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* Display Selected Players as Chips */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedHomeScorers.map((scorer, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-full text-xs"
+                        >
+                          <span>{scorer}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeGoalScorer("home", index)}
+                            className="text-white hover:text-red-400"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Away Team Goal Scorers */}
                   <div>
                     <label className="block text-sm text-gray-300 mb-2">
                       Away Team Goal Scorers
                     </label>
-                    <input
-                      name="awayTeamGoalScorers"
-                      defaultValue={editingMatch?.awayTeamGoalScorers}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                    />
+                    <div className="relative">
+                      <select
+                        name="awayGoalScorers"
+                        onChange={(e) => addGoalScorer("away", e.target.value)}
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      >
+                        <option value="">Select Player</option>
+                        {awayteamplayers.map((player) => (
+                          <option key={player._id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* Display Selected Players as Chips */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedAwayScorers.map((scorer, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-full text-xs"
+                        >
+                          <span>{scorer}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeGoalScorer("away", index)}
+                            className="text-white hover:text-red-400"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
+                {/* Yellow Card and Red Card Entry */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Yellow Card Section */}
                   <div>
                     <label className="block text-sm text-gray-300 mb-2">Yellow Cards</label>
-                    <input
-                      name="YellowCards"
-                      defaultValue={editingMatch?.YellowCards}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                    />
+                    <div className="relative">
+                      <select
+                        name="yellowCards"
+                        onChange={(e) => addCard("yellow", e.target.value)}
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      >
+                        <option value="">Select Player</option>
+                        {[...hometeamplayers, ...awayteamplayers].map((player) => (
+                          <option key={player._id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* Display Selected Players as Chips */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedYellowCards.map((player, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 px-3 py-1 bg-yellow-500 text-black rounded-full text-xs"
+                        >
+                          <span>{player}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeCard("yellow", index)}
+                            className="text-black hover:text-red-700"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Red Card Section */}
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">RedCards</label>
-                    <input
-                      name="RedCards"
-                      defaultValue={editingMatch?.redcards}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                    />
+                    <label className="block text-sm text-gray-300 mb-2">Red Cards</label>
+                    <div className="relative">
+                      <select
+                        name="redCards"
+                        onChange={(e) => addCard("red", e.target.value)}
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      >
+                        <option value="">Select Player</option>
+                        {[...hometeamplayers, ...awayteamplayers].map((player) => (
+                          <option key={player._id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* Display Selected Players as Chips */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedRedCards.map((player, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-full text-xs"
+                        >
+                          <span>{player}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeCard("red", index)}
+                            className="text-white hover:text-red-200"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </>
@@ -246,10 +506,7 @@ function MatchesManagement() {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  setEditingMatch(null);
-                }}
+                onClick={handlereset}
                 className="px-4 py-2 text-gray-300 hover:text-white"
               >
                 Cancel
@@ -266,8 +523,8 @@ function MatchesManagement() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {matches.map((match) => (
-          <div key={match.id} className="match-card p-6">
+        {matches?.map((match) => (
+          <div key={match._id} className="match-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 text-indigo-400">
                 <Calendar size={18} />
@@ -279,12 +536,16 @@ function MatchesManagement() {
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-center">
                 <Home size={24} className="mb-1 text-green-500" />
-                <span className="font-medium">{match.homeTeam}</span>
+                <span className="font-medium">{match.homeTeam.name}</span> {" "}
+                <span>  {match.status === "completed" ? match.homeGoals : ""}</span>
               </div>
               <span className="text-2xl font-bold">vs</span>
               <div className="text-center">
                 <Goal size={24} className="mb-1 text-red-500" />
-                <span className="font-medium">{match.awayTeam}</span>
+                <span className="font-medium">
+                  {match.awayTeam.name}
+                  <span>  {match.status === "completed" ? match.awayGoals : ""}</span>
+                </span>
               </div>
             </div>
 
@@ -310,7 +571,7 @@ function MatchesManagement() {
                 <Edit size={18} />
               </button>
               <button
-                onClick={() => handleDelete(match.id)}
+                onClick={() => handleDelete(match._id)}
                 className="text-red-400 hover:text-red-300"
               >
                 <Trash2 size={18} />

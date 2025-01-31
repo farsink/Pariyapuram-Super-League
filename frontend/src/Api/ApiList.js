@@ -76,3 +76,46 @@ export const updatePlayer = async (playerId, formData) => {
   );
   return response;
 };
+
+{
+  ("Matches");
+}
+
+// fetch all matches
+
+export const getMatches = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/match/getAll`, "GET", null, null);
+
+  return await response;
+};
+
+// add match
+
+export const addMatch = async (matchData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/match/create`,
+    "POST",
+    { "Content-Type": "application/json" }, // Set the content type to JSON
+    matchData // Send matchData directly as JSON
+  );
+  return response;
+};
+
+// delete match by id
+
+export const deleteMatchID = async (matchId) => {
+  const response = await AxiosConfig(`${serverurl}/api/match/${matchId}`, "DELETE");
+  return await response;
+};
+
+// update match by id
+
+export const updateMatch = async (matchId, matchData) => {
+ const response = await AxiosConfig(
+   `${serverurl}/api/match/${matchId}`,
+   "PUT",
+   { "Content-Type": "application/json" }, // Set the content type to JSON
+   matchData // Send matchData directly as JSON
+ );
+ return response;
+};

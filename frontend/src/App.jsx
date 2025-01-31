@@ -27,8 +27,8 @@ function App() {
   return (
     <>
       <UserProvider>
-        <TestNavbar/>
-        {/* {!isAdminRoute && <Navbarpsl />} */}
+        
+        {!isAdminRoute && <TestNavbar />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Home />} />
