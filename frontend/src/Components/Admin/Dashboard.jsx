@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Line, Bar, Pie } from "react-chartjs-2";
 import { Calendar, Users, Gavel, Ticket, DollarSign } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMatches } from "../../Redux/slices/MatchSlice";
+import { fetchTeams } from "../../Redux/slices/TeamSlice";
+import { fetchPlayers } from "../../Redux/slices/PlayerSlice";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { teams , status: teamStatus, error: teamError } = useSelector((state) => state.teams);
+  const {
+    matches,
+    status: matchesStatus,
+    error: matchesError,
+  } = useSelector((state) => state.matches);
+  const {
+    players,
+    status: playersStatus,
+    error: playersError,
+  } = useSelector((state) => state.players);
+
+
+  useEffect (() => {
+    dispatch(fetchMatches());
+    dispatch(fetchTeams());
+    dispatch(fetchPlayers());
+  }, [dispatch]);
+
   // Chart Data (Reuse from Admin.jsx)
+
   const ticketSalesData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
@@ -89,8 +114,8 @@ const Dashboard = () => {
             <h3 className="text-gray-400">Total Matches</h3>
             <Calendar className="w-5 h-5 text-indigo-600" />
           </div>
-          <p className="text-2xl font-semibold">24</p>
-          <p className="text-sm text-gray-400 mt-2">8 upcoming</p>
+          <p className="text-2xl font-semibold">{matches?.length}</p>
+          <p className="text-sm text-gray-400 mt-2">{matches?.filter(match => match.status === "scheduled").length} upcoming</p>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-xl">
@@ -98,8 +123,8 @@ const Dashboard = () => {
             <h3 className="text-gray-400">Players</h3>
             <Users className="w-5 h-5 text-indigo-600" />
           </div>
-          <p className="text-2xl font-semibold">156</p>
-          <p className="text-sm text-gray-400 mt-2">+12 this month</p>
+          <p className="text-2xl font-semibold">{players?.length}</p>
+          <p className="text-sm text-gray-400 mt-2">{teams?.length} teams</p>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-xl">

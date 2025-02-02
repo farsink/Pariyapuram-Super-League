@@ -11,6 +11,7 @@ import {
   createPlayerAsyncThunk,
   updatePlayerAsyncThunk,
 } from "../../Redux/slices/PlayerSlice";
+import Swal from "sweetalert2";
 
 const PlayersContainer = styled.div`
   .player-form {
@@ -86,14 +87,65 @@ function PlayersManagement() {
     }
   };
 
-  const handleDelete = (id) => {
-    // Delete player logic here
-    try {
-      dispatch(deletePlayer(id)).unwrap();
-    } catch (error) {
-      alert(`Operation failed: ${error.message}`);
+const handleDelete = async (id) => {
+  try {
+    // Confirmation dialog
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444", // Red for danger actions
+      cancelButtonColor: "#6c757d", // Gray for cancel
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        popup: "custom-swal-popup", // Custom class for styling
+        title: "custom-swal-title", // Custom class for title
+        content: "custom-swal-content", // Custom class for content
+        actions: "custom-swal-actions", // Custom class for buttons
+      },
+      width: "300px", // Smaller width
+    });
+
+    // If user confirms deletion
+    if (confirmation.isConfirmed) {
+      try {
+        // Dispatch the deletePlayer action
+        await dispatch(deletePlayer(id)).unwrap();
+
+        // Success alert
+        Swal.fire({
+          title: "Deleted!",
+          text: "Player deleted successfully!",
+          icon: "success",
+          timer: 1500,
+          customClass: {
+            popup: "custom-swal-popup", // Custom class for styling
+            title: "custom-swal-title", // Custom class for title
+            content: "custom-swal-content", // Custom class for content
+          },
+          width: "300px", // Smaller width
+        });
+      } catch (error) {
+        // Error alert
+        Swal.fire({
+          title: "Error!",
+          text: `Error deleting player: ${error.message}`,
+          icon: "error",
+          timer: 1500,
+          customClass: {
+            popup: "custom-swal-popup", // Custom class for styling
+            title: "custom-swal-title", // Custom class for title
+            content: "custom-swal-content", // Custom class for content
+          },
+          width: "300px", // Smaller width
+        });
+      }
     }
-  };
+  } catch (error) {
+    console.error("Error during deletion process:", error);
+  }
+};
    const groupedPlayers = players.reduce((acc, player) => {
      const team = player.team?.name || "No Team";
      if (!acc[team]) {

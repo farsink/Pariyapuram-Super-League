@@ -19,6 +19,7 @@ import PlayersManagement from "./Components/Admin/Players";
 import MatchesManagement from "./Components/Admin/Matches";
 import TeamsManagement from "./Components/Admin/Team";
 import TestNavbar from "./Components/TestNavbar";
+import Footer from "./Components/Footer";
 
 function App() {
   const location = useLocation();
@@ -27,7 +28,6 @@ function App() {
   return (
     <>
       <UserProvider>
-        
         {!isAdminRoute && <TestNavbar />}
         <Routes>
           <Route path="/" element={<Home />} />
@@ -45,15 +45,15 @@ function App() {
           <Route path="/resetPassword" element={<ForgotPassword />} />
           <Route path="/admin" element={<Admin />}>
             <Route index element={<Dashboard />} /> {/* Default admin route */}
-            <Route path="*" element={<Dashboard />} /> 
-            <Route path="fixture" element={<FixtureAdmin/>} /> {/* Nested admin route */}
+            <Route path="*" element={<Dashboard />} />
+            <Route path="fixture" element={<FixtureAdmin />} /> {/* Nested admin route */}
             <Route path="players" element={<PlayersManagement />} />
             <Route path="matches" element={<MatchesManagement />} />
             <Route path="teams" element={<TeamsManagement />} />
-            
             {/* Add more nested admin routes here */}
           </Route>
         </Routes>
+        {!isAdminRoute && <Footer />}
       </UserProvider>
     </>
   );

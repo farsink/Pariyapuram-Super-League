@@ -10,6 +10,8 @@ import {
   deleteTeamAsync,
 } from "../../Redux/slices/TeamSlice";
 import { serverurl } from "../../Api/ServerURL";
+import Swal from "sweetalert2";
+import "./Global.css"
 
 const TeamsContainer = styled.div`
   .team-form {
@@ -39,6 +41,40 @@ const TeamsContainer = styled.div`
     background: #1f2937;
     border-radius: 0.75rem;
     border: 1px solid #374151;
+  }
+  /* Custom SweetAlert2 Popup */
+  .custom-swal-popup {
+    background-color: #1f2937; /* Dark background */
+    color: #ffffff; /* White text */
+    border: 1px solid #374151; /* Border color */
+    font-family: "Inter", sans-serif; /* Match app's font */
+    padding: 1rem; /* Reduced padding for smaller size */
+  }
+
+  /* Title Styling */
+  .custom-swal-title {
+    font-size: 1rem; /* Smaller font size */
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Content Styling */
+  .custom-swal-content {
+    font-size: 0.875rem; /* Smaller font size */
+    margin-bottom: 1rem;
+  }
+
+  /* Buttons Styling */
+  .custom-swal-actions .swal2-confirm {
+    background-color: #ef4444; /* Red for confirm button */
+    font-size: 0.875rem; /* Smaller font size */
+    padding: 0.5rem 1rem; /* Reduced padding */
+  }
+
+  .custom-swal-actions .swal2-cancel {
+    background-color: #6c757d; /* Gray for cancel button */
+    font-size: 0.875rem; /* Smaller font size */
+    padding: 0.5rem 1rem; /* Reduced padding */
   }
 `;
 
@@ -99,38 +135,101 @@ function TeamsManagement() {
       })
     );
 
-
-
-  try {
-    let response;
-    if (editingTeam) {
-      // Update existing team
-      console.log(editingTeam._id);
+    try {
+      let response;
+      if (editingTeam) {
+        // Update existing team
       
-      response = await dispatch(updateTeamAsync({ id: editingTeam._id, formData: apiFormData }));
-    } else {
-      // Add new team
-      response = await dispatch(addTeamAsync(apiFormData)); // Send FormData directly
+
+        response = await dispatch(updateTeamAsync({ id: editingTeam._id, formData: apiFormData }));
+      } else {
+        // Add new team
+        response = await dispatch(addTeamAsync(apiFormData)); // Send FormData directly
+      }
+     
+    } catch (error) {
+      console.error("Error:", error);
     }
-    console.log("Response:", response);
-  } catch (error) {
-    console.error("Error:", error);
-  }
 
     setShowForm(false);
     setEditingTeam(null);
     setSelectedTeam(null); // Close modal after editing
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await dispatch(deleteTeamAsync(id));
-      console.log("Response: delete", response);
-    } catch (error) {
-      console.error("Error deleting team:", error);
-    }
-    setSelectedTeam(null); // Close modal after deleting
-  };
+ const handleDelete = async (id) => {
+   try {
+     // Confirmation dialog
+     const confirmation = await Swal.fire({
+       title: "Are you sure?",
+       text: "You won't be able to revert this!",
+       icon: "warning",
+       showCancelButton: true,
+       confirmButtonColor: "#ef4444", // Red for danger actions
+       cancelButtonColor: "#6c757d", // Gray for cancel
+       confirmButtonText: "Yes, delete it!",
+       customClass: {
+         popup: "custom-swal-popup", // Custom class for styling
+         title: "custom-swal-title", // Custom class for title
+         content: "custom-swal-content", // Custom class for content
+         actions: "custom-swal-actions", // Custom class for buttons
+       },
+       width: "300px", // Smaller width
+     });
+
+     // If user confirms deletion
+     if (confirmation.isConfirmed) {
+       const response = await dispatch(deleteTeamAsync(id));
+
+
+       if (response.meta.requestStatus === "fulfilled") {
+         // Success alert
+         Swal.fire({
+           title: "Deleted!",
+           text: "Team deleted successfully!",
+           icon: "success",
+           timer: 1500,
+           customClass: {
+             popup: "custom-swal-popup", // Custom class for styling
+             title: "custom-swal-title", // Custom class for title
+             content: "custom-swal-content", // Custom class for content
+           },
+           width: "300px", // Smaller width
+         });
+       } else {
+         // Error alert
+         Swal.fire({
+           title: "Error!",
+           text: "Error deleting team",
+           icon: "error",
+           timer: 1500,
+           customClass: {
+             popup: "custom-swal-popup", // Custom class for styling
+             title: "custom-swal-title", // Custom class for title
+             content: "custom-swal-content", // Custom class for content
+           },
+           width: "300px", // Smaller width
+         });
+       }
+     }
+   } catch (error) {
+     console.error("Error deleting team:", error);
+     // Error alert in case of unexpected errors
+     Swal.fire({
+       title: "Error!",
+       text: "An unexpected error occurred while deleting the team.",
+       icon: "error",
+       timer: 1500,
+       customClass: {
+         popup: "custom-swal-popup", // Custom class for styling
+         title: "custom-swal-title", // Custom class for title
+         content: "custom-swal-content", // Custom class for content
+       },
+       width: "300px", // Smaller width
+     });
+   } finally {
+     setSelectedTeam(null); // Close modal after deleting
+   }
+ };
 
   if (status === "error") {
     return (

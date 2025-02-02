@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Search, User, X, ChevronDown } from "lucide-react";
 import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
 
 const TestNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const { user } = useUser(); // Get user data from the context
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      setLoggedIn(true);
+    }
+  }, [user]);
 
   return (
     <StyledWrapper className="font-oswald sticky top-0 z-50">
-      <nav className={`bg-black text-white ${isMenuOpen ? "mobile-menu-open" : ""} sticky top-0`}>
+      <nav className={`bg-black text-white ${isMenuOpen ? "mobile-menu-open" : ""} border-b-4 border-accent`}>
         <div className="max-w-7xl mx-auto px-4">
           {/* Main Navigation Bar */}
           <div className="flex items-center h-16 relative">
@@ -20,43 +30,51 @@ const TestNavbar = () => {
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <div className="hidden lg:flex lg:items-center lg:space-x-8 ml-8">
-                <a href="#" className="nav-link">
+              <div className="hidden lg:flex lg:items-center lg:space-x-8 ml-8 z-100">
+                <Link to={"/tickets"} className="nav-link">
                   TICKETS
-                </a>
-                <a href="#" className="nav-link">
-                  SHOP
-                </a>
-                <a href="#" className="nav-link">
-                  BIANCONERI
-                </a>
-                <a href="#" className="nav-link">
-                  VIDEO
-                </a>
+                </Link>
+                <Link to={"/fixtures"} className="nav-link">
+                  FIXTURES
+                </Link>
+                <Link to={"/videos"} className="nav-link">
+                  VIDEOS
+                </Link>
+                <Link to={"/news"} className="nav-link">
+                  NEWS
+                </Link>
               </div>
             </div>
 
             {/* Centered Logo */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img src="../src/assets/LogoText.png" alt="Juventus" className="h-10 w-auto" />
+              <Link to="/">
+                <img src="../src/assets/LogoText.png" alt="PSL_logo" className="h-10 w-auto" />
+              </Link>{" "}
             </div>
 
             {/* Right Section */}
             <div className="flex items-center ml-auto">
               {/* Only show Adidas logo and Help icon on larger screens */}
-              <div className="hidden lg:block">
+              <div className="hidden md:block">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
                   alt="Adidas"
                   className="h-6 w-auto"
                 />
-                <div className="nav-divider"></div>
+                <div className="nav-divider mb-4"></div>
               </div>
               <div className="flex space-x-4">
                 <button aria-label="Search" className="p-2 nav-icon">
                   <Search size={20} />
                 </button>
-                <button aria-label="Account" className="p-2 nav-icon">
+                <button
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  aria-label="Account"
+                  className="p-2 nav-icon"
+                >
                   <User size={20} />
                 </button>
               </div>
@@ -100,7 +118,7 @@ const StyledWrapper = styled.div`
   .font-oswald {
     font-family: "Oswald", sans-serif;
   }
- 
+
   .nav-link {
     text-transform: uppercase;
     font-family: "Oswald", sans-serif;
@@ -114,7 +132,7 @@ const StyledWrapper = styled.div`
   }
 
   .nav-link:hover {
-    color: #fda4af; /* text-rose-300 */
+    color: var(--accent-color, #ffff00); /* text-rose-300 */
   }
 
   .nav-icon {
@@ -123,11 +141,11 @@ const StyledWrapper = styled.div`
   }
 
   .nav-icon:hover {
-    color: #fda4af; /* hover:text-rose-300 */
+    color: var(--accent-color); /* hover:text-rose-300 */
   }
 
   .nav-divider {
-    height: 2rem; /* h-8 */
+    height: 3rem; /* h-8 */
     width: 1px; /* w-px */
     background-color: #374151; /* bg-gray-700 */
     margin-left: 1rem; /* mx-4 */
@@ -157,6 +175,12 @@ const StyledWrapper = styled.div`
     z-index: 50;
     overflow-y: auto;
     background-color: black; /* Add this line */
+  }
+  .border {
+   border: 1px solid var(--accent-color);
+    background-color: var(--accent-color);
+    margin: 0;
+    padding: 0;
   }
 `;
 

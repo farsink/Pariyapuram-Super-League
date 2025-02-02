@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Calendar, Home, LucideGoal, Edit, Trash2, Plus, Clock, Trophy, Goal } from "lucide-react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { addMatchAsync, fetchMatches, updateMatchAsync } from "../../Redux/slices/MatchSlice";
+import {
+  addMatchAsync,
+  deleteMatchAsync,
+  fetchMatches,
+  updateMatchAsync,
+} from "../../Redux/slices/MatchSlice";
 import { serverurl } from "../../Api/ServerURL";
+import Swal from "sweetalert2";
 
 const MatchesContainer = styled.div`
   .match-form {
@@ -59,10 +65,10 @@ function MatchesManagement() {
   const addGoalScorer = (team, playerName) => {
     if (!playerName) return; // Prevent adding empty values
     if (team === "home") {
-      setSelectedHomeScorers((prev) => [...prev, playerName]);
+      setSelectedHomeScorers((prev) => [...prev, playerName]); // Allow duplicates
       setScore((prev) => ({ ...prev, home: prev.home + 1 }));
     } else if (team === "away") {
-      setSelectedAwayScorers((prev) => [...prev, playerName]);
+      setSelectedAwayScorers((prev) => [...prev, playerName]); // Allow duplicates
       setScore((prev) => ({ ...prev, away: prev.away + 1 }));
     }
   };
@@ -105,7 +111,6 @@ function MatchesManagement() {
     dispatch(fetchMatches());
   }, [dispatch]);
 
-  console.log("fetchedData :", matches);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -132,20 +137,29 @@ function MatchesManagement() {
 
     // Construct cards array
     const cards = [
-      ...selectedYellowCards.map((player) => ({
-        player:
-          [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?._id || null,
-        team: [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?.team || null,
-        cardType: "yellow",
-      })),
-      ...selectedRedCards.map((player) => ({
-        player:
-          [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?._id || null,
-        team: [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player)?.team || null,
-        cardType: "red",
-      })),
+      ...selectedYellowCards.map((player) => {
+        const playerObj = [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player);
+        const teamId = hometeamplayers.includes(playerObj)
+          ? editingMatch?.homeTeam?._id
+          : editingMatch?.awayTeam?._id;
+        return {
+          player: playerObj?._id || null,
+          team: teamId || null,
+          cardType: "yellow",
+        };
+      }),
+      ...selectedRedCards.map((player) => {
+        const playerObj = [...hometeamplayers, ...awayteamplayers].find((p) => p.name === player);
+        const teamId = hometeamplayers.includes(playerObj)
+          ? editingMatch?.homeTeam?._id
+          : editingMatch?.awayTeam?._id;
+        return {
+          player: playerObj?._id || null,
+          team: teamId || null,
+          cardType: "red",
+        };
+      }),
     ];
-
     // Determine the winning team
     const Wonteam =
       score.home > score.away
@@ -184,10 +198,117 @@ function MatchesManagement() {
     }
   };
 
-  const handleDelete = (id) => {
-    setMatches(matches.filter((m) => m._id !== id));
-  };
+ const handleDelete = async (id) => {
+   try {
+     // Confirmation dialog
+     const confirmation = await Swal.fire({
+       title: "Are you sure?",
+       text: "You won't be able to revert this!",
+       icon: "warning",
+       showCancelButton: true,
+       confirmButtonColor: "#ef4444", // Red for danger actions
+       cancelButtonColor: "#6c757d", // Gray for cancel
+       confirmButtonText: "Yes, delete it!",
+       customClass: {
+         popup: "custom-swal-popup", // Custom class for styling
+         title: "custom-swal-title", // Custom class for title
+         content: "custom-swal-content", // Custom class for content
+         actions: "custom-swal-actions", // Custom class for buttons
+       },
+       width: "300px", // Smaller width
+     });
 
+     // If user confirms deletion
+     if (confirmation.isConfirmed) {
+       try {
+         // Dispatch the deleteMatchAsync action
+         const response = await dispatch(deleteMatchAsync(id));
+
+         // Check if the deletion was successful
+         if (response.meta.requestStatus === "fulfilled") {
+           // Success alert
+           Swal.fire({
+             title: "Deleted!",
+             text: "Match deleted successfully!",
+             icon: "success",
+             timer: 1500,
+             customClass: {
+               popup: "custom-swal-popup", // Custom class for styling
+               title: "custom-swal-title", // Custom class for title
+               content: "custom-swal-content", // Custom class for content
+             },
+             width: "300px", // Smaller width
+           });
+         } else {
+           // Error alert
+           Swal.fire({
+             title: "Error!",
+             text: "Error deleting match",
+             icon: "error",
+             timer: 1500,
+             customClass: {
+               popup: "custom-swal-popup", // Custom class for styling
+               title: "custom-swal-title", // Custom class for title
+               content: "custom-swal-content", // Custom class for content
+             },
+             width: "300px", // Smaller width
+           });
+         }
+       } catch (error) {
+         // Error alert for unexpected errors
+         Swal.fire({
+           title: "Error!",
+           text: `An unexpected error occurred: ${error.message}`,
+           icon: "error",
+           timer: 1500,
+           customClass: {
+             popup: "custom-swal-popup", // Custom class for styling
+             title: "custom-swal-title", // Custom class for title
+             content: "custom-swal-content", // Custom class for content
+           },
+           width: "300px", // Smaller width
+         });
+       }
+     }
+   } catch (error) {
+     console.error("Error during deletion process:", error);
+   }
+ };
+  const handleEdit = (match) => () => {
+    setEditingMatch(match);
+    setShowForm(true);
+    setScore({ home: match.homeGoals, away: match.awayGoals });
+
+    if (match.goalScorers) {
+      const homeScorers = match.goalScorers
+        .filter((scorer) => scorer.team === match.homeTeam._id)
+        .map((scorer) => scorer.player.name);
+
+      const awayScorers = match.goalScorers
+        .filter((scorer) => scorer.team === match.awayTeam._id)
+        .map((scorer) => scorer.player.name);
+
+      setSelectedAwayScorers(awayScorers);
+      setSelectedHomeScorers(homeScorers);
+    } else {
+      setSelectedAwayScorers([]);
+      setSelectedHomeScorers([]);
+    }
+
+    if (match.cards) {
+      const yellowCards = match.cards
+        .filter((card) => card.cardType === "yellow")
+        .map((card) => card.player.name);
+      const redCards = match.cards
+        .filter((card) => card.cardType === "red")
+        .map((card) => card.player.name);
+      setSelectedYellowCards(yellowCards);
+      setSelectedRedCards(redCards);
+    } else {
+      setSelectedYellowCards([]);
+      setSelectedRedCards([]);
+    }
+  };
   const handlereset = () => {
     setEditingMatch(null);
     setScore({ home: 0, away: 0 });
@@ -536,15 +657,15 @@ function MatchesManagement() {
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-center">
                 <Home size={24} className="mb-1 text-green-500" />
-                <span className="font-medium">{match.homeTeam.name}</span> {" "}
-                <span>  {match.status === "completed" ? match.homeGoals : ""}</span>
+                <span className="font-medium">{match.homeTeam.name}</span>{" "}
+                <span> {match.status === "completed" ? match.homeGoals : ""}</span>
               </div>
               <span className="text-2xl font-bold">vs</span>
               <div className="text-center">
                 <Goal size={24} className="mb-1 text-red-500" />
                 <span className="font-medium">
                   {match.awayTeam.name}
-                  <span>  {match.status === "completed" ? match.awayGoals : ""}</span>
+                  <span> {match.status === "completed" ? match.awayGoals : ""}</span>
                 </span>
               </div>
             </div>
@@ -561,13 +682,7 @@ function MatchesManagement() {
             </div>
 
             <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => {
-                  setEditingMatch(match);
-                  setShowForm(true);
-                }}
-                className="text-indigo-400 hover:text-indigo-300"
-              >
+              <button onClick={handleEdit(match)} className="text-indigo-400 hover:text-indigo-300">
                 <Edit size={18} />
               </button>
               <button

@@ -32,10 +32,10 @@ import {
   Legend,
 } from "chart.js";
 
-
 import styled from "styled-components";
 import ProtectedAdminRoute from "../Middlewares/Protected.Jsx";
-import { Outlet, Link, Navigate } from "react-router-dom";
+import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 const Sidebar = styled.div`
   .sidebar::-webkit-scrollbar {
@@ -68,7 +68,9 @@ function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-
+  const { user } = useUser();
+  const { signOut } = useAuth();
+  const { navigate } = useNavigate();
   const navItems = [
     { icon: Home, label: "Dashboard", to: "/admin" },
     { icon: ShieldHalf, label: "Teams", to: "/admin/teams" },
@@ -202,7 +204,9 @@ function Admin() {
                       alt="Profile"
                       className="w-8 h-8 rounded-full"
                     />
-                    <span className="hidden md:inline-block text-white">Admin User</span>
+                    <span className="hidden md:inline-block text-white">
+                      {user?.username || user?.primaryEmailAddress.emailAddress}
+                    </span>
                     <ChevronRight
                       className={`w-4 h-4 transform transition-transform ${
                         profileOpen ? "rotate-90" : ""
@@ -230,6 +234,11 @@ function Admin() {
                       <a
                         href="#"
                         className="px-4 py-2 hover:bg-gray-700 flex items-center no-underline space-x-2 text-red-400"
+                        onClick={() => {
+                          signOut().then(() => {
+                            navigate("/");
+                          });
+                        }}
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Logout</span>

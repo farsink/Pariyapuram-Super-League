@@ -1,0 +1,34 @@
+/* Custom SweetAlert2 Popup */
+.custom-swal-popup {
+  background-color: #1f2937 !important; /* Dark background */
+  color: #ffffff !important; /* White text */
+  border: 1px solid #374151 !important; /* Border color */
+  font-family: "Inter", sans-serif !important; /* Match app's font */
+  padding: 1rem !important; /* Reduced padding for smaller size */
+}
+
+/* Title Styling */
+.custom-swal-title {
+  font-size: 1rem !important; /* Smaller font size */
+  font-weight: bold !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Content Styling */
+.custom-swal-content {
+  font-size: 0.875rem !important; /* Smaller font size */
+  margin-bottom: 1rem !important;
+}
+
+/* Buttons Styling */
+.custom-swal-actions .swal2-confirm {
+  background-color: #ef4444 !important; /* Red for confirm button */
+  font-size: 0.875rem !important; /* Smaller font size */
+  padding: 0.5rem 1rem !important; /* Reduced padding */
+}
+
+.custom-swal-actions .swal2-cancel {
+  background-color: #6c757d !important; /* Gray for cancel button */
+  font-size: 0.875rem !important; /* Smaller font size */
+  padding: 0.5rem 1rem !important; /* Reduced padding */
+}

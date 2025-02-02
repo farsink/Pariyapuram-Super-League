@@ -57,6 +57,10 @@ exports.getAllMatches = async (req, res) => {
       .populate({
         path: "goalScorers.player",
         select: "name",
+      })
+      .populate({
+        path:"cards.player",
+        select:"name"
       }); // Populate away team name
     res.status(200).json(matches);
   } catch (err) {
