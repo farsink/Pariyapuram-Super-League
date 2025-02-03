@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes, useLocation,Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation, Outlet } from "react-router-dom";
 import Navbarpsl from "./Components/Navbarpsl";
 import News from "./Pages/News";
 import Tickets from "./Pages/Tickets";
@@ -20,11 +20,22 @@ import MatchesManagement from "./Components/Admin/Matches";
 import TeamsManagement from "./Components/Admin/Team";
 import TestNavbar from "./Components/TestNavbar";
 import Footer from "./Components/Footer";
+import { useDispatch } from "react-redux";
+import { fetchMatches } from "./Redux/slices/MatchSlice";
+import { fetchTeams } from "./Redux/slices/TeamSlice";
+import { fetchPlayers } from "./Redux/slices/PlayerSlice";
 
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    // Fetch initial data
+    dispatch(fetchMatches());
+    dispatch(fetchTeams());
+    dispatch(fetchPlayers());
+  }, [dispatch]);
   return (
     <>
       <UserProvider>

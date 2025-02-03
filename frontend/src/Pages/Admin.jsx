@@ -108,7 +108,9 @@ function Admin() {
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <div className="flex items-center space-x-3">
-                <img src="../src/assets/psl-logo1.png" className="w-9 h-8" alt="" />
+                <Link to="/">
+                  <img src="../src/assets/psl-logo1.png" className="w-9 h-8" alt="" />
+                </Link>
                 <span className="text-xl font-bold">Sports Admin</span>
               </div>
               <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>

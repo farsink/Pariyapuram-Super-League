@@ -12,6 +12,8 @@ import {
   updatePlayerAsyncThunk,
 } from "../../Redux/slices/PlayerSlice";
 import Swal from "sweetalert2";
+import { Slide, toast,ToastContainer } from "react-toastify";
+
 
 const PlayersContainer = styled.div`
   .player-form {
@@ -50,7 +52,6 @@ function PlayersManagement() {
   if (status === "failed") {
     return <div>Error: {error}</div>;
   }
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,9 +75,15 @@ function PlayersManagement() {
 
       // 3. Dispatch action
       if (editingPlayer) {
-        await dispatch(updatePlayerAsyncThunk({ id: editingPlayer._id, updatedData: data })).unwrap();
+        const response = await dispatch(
+          updatePlayerAsyncThunk({ id: editingPlayer._id, updatedData: data })
+        ).unwrap();
+        if (response) {
+          toast.success("Player updated successfully");
+        }
       } else {
         await dispatch(createPlayerAsyncThunk(data)).unwrap();
+        toast.success("Player created successfully");
       }
 
       // 4. Reset form
@@ -87,76 +94,89 @@ function PlayersManagement() {
     }
   };
 
-const handleDelete = async (id) => {
-  try {
-    // Confirmation dialog
-    const confirmation = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444", // Red for danger actions
-      cancelButtonColor: "#6c757d", // Gray for cancel
-      confirmButtonText: "Yes, delete it!",
-      customClass: {
-        popup: "custom-swal-popup", // Custom class for styling
-        title: "custom-swal-title", // Custom class for title
-        content: "custom-swal-content", // Custom class for content
-        actions: "custom-swal-actions", // Custom class for buttons
-      },
-      width: "300px", // Smaller width
-    });
+  const handleDelete = async (id) => {
+    try {
+      // Confirmation dialog
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444", // Red for danger actions
+        cancelButtonColor: "#6c757d", // Gray for cancel
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+          popup: "custom-swal-popup", // Custom class for styling
+          title: "custom-swal-title", // Custom class for title
+          content: "custom-swal-content", // Custom class for content
+          actions: "custom-swal-actions", // Custom class for buttons
+        },
+        width: "300px", // Smaller width
+      });
 
-    // If user confirms deletion
-    if (confirmation.isConfirmed) {
-      try {
-        // Dispatch the deletePlayer action
-        await dispatch(deletePlayer(id)).unwrap();
+      // If user confirms deletion
+      if (confirmation.isConfirmed) {
+        try {
+          // Dispatch the deletePlayer action
+          await dispatch(deletePlayer(id)).unwrap();
 
-        // Success alert
-        Swal.fire({
-          title: "Deleted!",
-          text: "Player deleted successfully!",
-          icon: "success",
-          timer: 1500,
-          customClass: {
-            popup: "custom-swal-popup", // Custom class for styling
-            title: "custom-swal-title", // Custom class for title
-            content: "custom-swal-content", // Custom class for content
-          },
-          width: "300px", // Smaller width
-        });
-      } catch (error) {
-        // Error alert
-        Swal.fire({
-          title: "Error!",
-          text: `Error deleting player: ${error.message}`,
-          icon: "error",
-          timer: 1500,
-          customClass: {
-            popup: "custom-swal-popup", // Custom class for styling
-            title: "custom-swal-title", // Custom class for title
-            content: "custom-swal-content", // Custom class for content
-          },
-          width: "300px", // Smaller width
-        });
+          // Success alert
+          Swal.fire({
+            title: "Deleted!",
+            text: "Player deleted successfully!",
+            icon: "success",
+            timer: 1500,
+            customClass: {
+              popup: "custom-swal-popup", // Custom class for styling
+              title: "custom-swal-title", // Custom class for title
+              content: "custom-swal-content", // Custom class for content
+            },
+            width: "300px", // Smaller width
+          });
+        } catch (error) {
+          // Error alert
+          Swal.fire({
+            title: "Error!",
+            text: `Error deleting player: ${error.message}`,
+            icon: "error",
+            timer: 1500,
+            customClass: {
+              popup: "custom-swal-popup", // Custom class for styling
+              title: "custom-swal-title", // Custom class for title
+              content: "custom-swal-content", // Custom class for content
+            },
+            width: "300px", // Smaller width
+          });
+        }
       }
+    } catch (error) {
+      console.error("Error during deletion process:", error);
     }
-  } catch (error) {
-    console.error("Error during deletion process:", error);
-  }
-};
-   const groupedPlayers = players.reduce((acc, player) => {
-     const team = player.team?.name || "No Team";
-     if (!acc[team]) {
-       acc[team] = [];
-     }
-     acc[team].push(player);
-     return acc;
-   }, {});
+  };
+  const groupedPlayers = players.reduce((acc, player) => {
+    const team = player.team?.name || "No Team";
+    if (!acc[team]) {
+      acc[team] = [];
+    }
+    acc[team].push(player);
+    return acc;
+  }, {});
 
   return (
     <PlayersContainer>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+        theme="dark"
+      />
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Players Management</h1>

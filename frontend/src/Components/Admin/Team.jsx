@@ -12,6 +12,7 @@ import {
 import { serverurl } from "../../Api/ServerURL";
 import Swal from "sweetalert2";
 import "./Global.css"
+import { Slide, toast, ToastContainer } from "react-toastify";
 
 const TeamsContainer = styled.div`
   .team-form {
@@ -103,7 +104,7 @@ function TeamsManagement() {
 
     // Validate file type and size
     if (logoFile && logoFile.size > 0) {
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
       const maxSize = 9 * 1024 * 1024; // 9MB in bytes
 
       if (!allowedTypes.includes(logoFile.type)) {
@@ -142,9 +143,11 @@ function TeamsManagement() {
       
 
         response = await dispatch(updateTeamAsync({ id: editingTeam._id, formData: apiFormData }));
+        toast.success("Team updated");
       } else {
         // Add new team
         response = await dispatch(addTeamAsync(apiFormData)); // Send FormData directly
+        toast.success("Team added");
       }
      
     } catch (error) {
@@ -241,6 +244,19 @@ function TeamsManagement() {
 
   return (
     <TeamsContainer>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+        theme="dark"
+      />
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Teams Management</h1>

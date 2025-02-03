@@ -7,13 +7,6 @@ const standings = [
       name: "Liverpool",
       logo: "https://resources.premierleague.com/premierleague/badges/t14.svg",
     },
-    played: 23,
-    won: 17,
-    drawn: 5,
-    lost: 1,
-    goalDifference: 35,
-    points: 56,
-    form: ["W", "W", "W", "D", "D"],
   },
   {
     position: 2,
