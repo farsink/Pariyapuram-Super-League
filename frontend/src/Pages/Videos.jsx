@@ -1,8 +1,11 @@
 import React from 'react'
+import Loader from '../Components/Customs/Loader'
 
 function Videos() {
   return (
-    <div>Videos</div>
+    <>
+    <Loader/>
+    </>
   )
 }
 

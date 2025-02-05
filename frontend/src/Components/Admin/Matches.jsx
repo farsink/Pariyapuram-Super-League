@@ -10,6 +10,7 @@ import {
 } from "../../Redux/slices/MatchSlice";
 import { serverurl } from "../../Api/ServerURL";
 import Swal from "sweetalert2";
+import { Slide, toast, ToastContainer } from "react-toastify";
 
 const MatchesContainer = styled.div`
   .match-form {
@@ -117,11 +118,12 @@ function MatchesManagement() {
     const formData = new FormData(e.target);
 
     // Extract form data
-    const date = new Date(formData.get("date")).toISOString();
+    const date = new Date(formData.get("date"))
     const homeTeamName = formData.get("homeTeam");
     const awayTeamName = formData.get("awayTeam");
     const round = formData.get("round");
     const status = formData.get("status");
+console.log(date);
 
     // Construct goal scorers array
     const goalScorers = [
@@ -166,7 +168,7 @@ function MatchesManagement() {
         ? editingMatch?.homeTeam?._id
         : score.away > score.home
         ? editingMatch?.awayTeam?._id
-        : "TIED";
+        : null;
 
     // Construct the match data object
     const matchData = {
@@ -177,7 +179,7 @@ function MatchesManagement() {
       homeGoals: score.home,
       awayGoals: score.away,
       wonTeam: Wonteam,
-      status,
+      status: status,
       goalScorers: goalScorers.filter((scorer) => scorer.player !== null),
       cards: cards.filter((card) => card.player !== null),
     };
@@ -186,97 +188,103 @@ function MatchesManagement() {
       if (editingMatch) {
         // Update an existing match
         await dispatch(updateMatchAsync({ id: editingMatch._id, matchData }));
+        setEditingMatch(null);
+        toast.success("Match updated successfully");
       } else {
         // Create a new match
         await dispatch(addMatchAsync(matchData));
+        toast.success("Match created successfully");
+        setShowForm(false);
       }
       dispatch(fetchMatches()); // Refresh matches list
       setShowForm(false);
       setEditingMatch(null);
     } catch (error) {
       console.error(error);
+      toast.error("An error occurred while processing your request.");
     }
   };
 
- const handleDelete = async (id) => {
-   try {
-     // Confirmation dialog
-     const confirmation = await Swal.fire({
-       title: "Are you sure?",
-       text: "You won't be able to revert this!",
-       icon: "warning",
-       showCancelButton: true,
-       confirmButtonColor: "#ef4444", // Red for danger actions
-       cancelButtonColor: "#6c757d", // Gray for cancel
-       confirmButtonText: "Yes, delete it!",
-       customClass: {
-         popup: "custom-swal-popup", // Custom class for styling
-         title: "custom-swal-title", // Custom class for title
-         content: "custom-swal-content", // Custom class for content
-         actions: "custom-swal-actions", // Custom class for buttons
-       },
-       width: "300px", // Smaller width
-     });
+  const handleDelete = async (id) => {
+    try {
+      // Confirmation dialog
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444", // Red for danger actions
+        cancelButtonColor: "#6c757d", // Gray for cancel
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+          popup: "custom-swal-popup", // Custom class for styling
+          title: "custom-swal-title", // Custom class for title
+          content: "custom-swal-content", // Custom class for content
+          actions: "custom-swal-actions", // Custom class for buttons
+        },
+        width: "300px", // Smaller width
+      });
 
-     // If user confirms deletion
-     if (confirmation.isConfirmed) {
-       try {
-         // Dispatch the deleteMatchAsync action
-         const response = await dispatch(deleteMatchAsync(id));
+      // If user confirms deletion
+      if (confirmation.isConfirmed) {
+        try {
+          // Dispatch the deleteMatchAsync action
+          const response = await dispatch(deleteMatchAsync(id));
 
-         // Check if the deletion was successful
-         if (response.meta.requestStatus === "fulfilled") {
-           // Success alert
-           Swal.fire({
-             title: "Deleted!",
-             text: "Match deleted successfully!",
-             icon: "success",
-             timer: 1500,
-             customClass: {
-               popup: "custom-swal-popup", // Custom class for styling
-               title: "custom-swal-title", // Custom class for title
-               content: "custom-swal-content", // Custom class for content
-             },
-             width: "300px", // Smaller width
-           });
-         } else {
-           // Error alert
-           Swal.fire({
-             title: "Error!",
-             text: "Error deleting match",
-             icon: "error",
-             timer: 1500,
-             customClass: {
-               popup: "custom-swal-popup", // Custom class for styling
-               title: "custom-swal-title", // Custom class for title
-               content: "custom-swal-content", // Custom class for content
-             },
-             width: "300px", // Smaller width
-           });
-         }
-       } catch (error) {
-         // Error alert for unexpected errors
-         Swal.fire({
-           title: "Error!",
-           text: `An unexpected error occurred: ${error.message}`,
-           icon: "error",
-           timer: 1500,
-           customClass: {
-             popup: "custom-swal-popup", // Custom class for styling
-             title: "custom-swal-title", // Custom class for title
-             content: "custom-swal-content", // Custom class for content
-           },
-           width: "300px", // Smaller width
-         });
-       }
-     }
-   } catch (error) {
-     console.error("Error during deletion process:", error);
-   }
- };
+          // Check if the deletion was successful
+          if (response.meta.requestStatus === "fulfilled") {
+            // Success alert
+            Swal.fire({
+              title: "Deleted!",
+              text: "Match deleted successfully!",
+              icon: "success",
+              timer: 1500,
+              customClass: {
+                popup: "custom-swal-popup", // Custom class for styling
+                title: "custom-swal-title", // Custom class for title
+                content: "custom-swal-content", // Custom class for content
+              },
+              width: "300px", // Smaller width
+            });
+          } else {
+            // Error alert
+            Swal.fire({
+              title: "Error!",
+              text: "Error deleting match",
+              icon: "error",
+              timer: 1500,
+              customClass: {
+                popup: "custom-swal-popup", // Custom class for styling
+                title: "custom-swal-title", // Custom class for title
+                content: "custom-swal-content", // Custom class for content
+              },
+              width: "300px", // Smaller width
+            });
+          }
+        } catch (error) {
+          // Error alert for unexpected errors
+          Swal.fire({
+            title: "Error!",
+            text: `An unexpected error occurred: ${error.message}`,
+            icon: "error",
+            timer: 1500,
+            customClass: {
+              popup: "custom-swal-popup", // Custom class for styling
+              title: "custom-swal-title", // Custom class for title
+              content: "custom-swal-content", // Custom class for content
+            },
+            width: "300px", // Smaller width
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error during deletion process:", error);
+    }
+  };
   const handleEdit = (match) => () => {
     setEditingMatch(match);
     setShowForm(true);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     setScore({ home: match.homeGoals, away: match.awayGoals });
 
     if (match.goalScorers) {
@@ -330,7 +338,10 @@ function MatchesManagement() {
           <p className="text-gray-400">Manage tournament matches and schedules</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            setEditingMatch(null);
+          }}
           className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2"
         >
           <Plus size={18} />
@@ -344,33 +355,39 @@ function MatchesManagement() {
             {editingMatch ? "Edit Match" : "New Match"}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">Date</label>
+                <input
+                  type="datetime-local"
+                  name="date"
+                  defaultValue={new Date(editingMatch.date).toISOString().slice(0, 16)}
+                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">Round</label>
+                <select
+                  name="round"
+                  defaultValue={editingMatch?.round}
+                  className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                  required
+                >
+                  <option value="Round 1">Round 1</option>
+                  <option value="Round 2">Round 2</option>
+                  <option value="Round 3">Round 3</option>
+                  <option value="Round 4">Round 4</option>
+                  <option value="Round 5">Round 5</option>
+                  <option value="Round 6">Round 6</option>
+                  <option value="Round 7">Round 7</option>
+                  <option value="Semi Final">Semi Final</option>
+                  <option value="Final">Final</option>
+                </select>
+              </div>
+            </div>
             {!editingMatch && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-gray-300 mb-2">Date</label>
-                    <input
-                      type="date"
-                      name="date"
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-300 mb-2">Round</label>
-                    <select
-                      name="round"
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      required
-                    >
-                      <option value="Group Stage">Group Stage</option>
-                      <option value="Quarter Final">Quarter Final</option>
-                      <option value="Semi Final">Semi Final</option>
-                      <option value="Final">Final</option>
-                    </select>
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray-300 mb-2">Home Team</label>
@@ -396,33 +413,6 @@ function MatchesManagement() {
 
             {editingMatch && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-gray-300 mb-2">Date</label>
-                    <input
-                      type="date"
-                      name="date"
-                      defaultValue={new Date(editingMatch.date).toISOString().split("T")[0]}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-300 mb-2">Round</label>
-                    <select
-                      name="round"
-                      defaultValue={editingMatch.round}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      required
-                    >
-                      <option value="Group Stage">Group Stage</option>
-                      <option value="Quarter Final">Quarter Final</option>
-                      <option value="Semi Final">Semi Final</option>
-                      <option value="Final">Final</option>
-                    </select>
-                  </div>
-                </div>
-
                 {/* score */}
 
                 <label className="block text-sm text-gray-300 mb-2">Score</label>
@@ -621,10 +611,37 @@ function MatchesManagement() {
                     </div>
                   </div>
                 </div>
+                {/* {status update} */}
               </>
             )}
-
-            <div className="flex justify-end gap-3 mt-6">
+            {/* Radio Buttons for Match Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Match Status</label>
+              <StyledWrapper>
+                <div className="radio-input bg-slate-700">
+                  <label>
+                    <input
+                      type="radio"
+                      name="status"
+                      value="scheduled"
+                      defaultChecked={editingMatch?.status === "scheduled"}
+                    />
+                    <span>Scheduled</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="status"
+                      value="completed"
+                      defaultChecked={editingMatch?.status === "completed"}
+                    />
+                    <span>Completed</span>
+                  </label>
+                  <span className="selection " />
+                </div>
+              </StyledWrapper>
+            </div>
+            <div className="flex justify-end items-center mt-4">
               <button
                 type="button"
                 onClick={handlereset}
@@ -695,8 +712,80 @@ function MatchesManagement() {
           </div>
         ))}
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+        theme="dark"
+      />
     </MatchesContainer>
   );
 }
+
+const StyledWrapper = styled.div`
+  .radio-input input {
+    display: none;
+  }
+
+  .radio-input {
+    --container_width: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    color: #000000;
+    width: var(--container_width);
+    overflow: hidden;
+    border: 1px solid rgba(53, 52, 52, 0.226);
+  }
+
+  .radio-input label {
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    font-weight: 600;
+    letter-spacing: -1px;
+    font-size: 14px;
+  }
+
+  .selection {
+    display: none;
+    position: absolute;
+    height: 100%;
+    width: calc(var(--container_width) / 2);
+    z-index: 0;
+    left: 0;
+    top: 0;
+    transition: 0.15s ease;
+  }
+
+  .radio-input label:has(input:checked) {
+    color: #fff;
+  }
+
+  .radio-input label:has(input:checked) ~ .selection {
+    background-color: rgb(11 117 223);
+    display: inline-block;
+  }
+
+  .radio-input label:nth-child(1):has(input:checked) ~ .selection {
+    transform: translateX(calc(var(--container_width) * 0 / 2));
+  }
+
+  .radio-input label:nth-child(2):has(input:checked) ~ .selection {
+    transform: translateX(calc(var(--container_width) * 1 / 2));
+  }
+`;
 
 export default MatchesManagement;

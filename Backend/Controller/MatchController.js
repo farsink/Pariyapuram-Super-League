@@ -59,8 +59,8 @@ exports.getAllMatches = async (req, res) => {
         select: "name",
       })
       .populate({
-        path:"cards.player",
-        select:"name"
+        path: "cards.player",
+        select: "name",
       }); // Populate away team name
     res.status(200).json(matches);
   } catch (err) {
@@ -85,17 +85,27 @@ exports.getMatchById = async (req, res) => {
 
 // Update a match by ID
 exports.updateMatch = async (req, res) => {
-  const { homeGoals, awayGoals, goalScorers, cards , wonTeam } = req.body;
+  const { homeGoals, awayGoals, goalScorers, cards, wonTeam, status, round, date } = req.body;
+
   try {
     const match = await Match.findByIdAndUpdate(
       req.params.id,
-      { homeGoals, awayGoals, goalScorers, cards, status : "completed", wonTeam },
+      {
+        date,
+        homeGoals,
+        awayGoals,
+        goalScorers,
+        cards,
+        status,
+        round, // Update status based on wonTeam,
+        wonTeam,
+      },
       { new: true }
     );
 
-    // Update player and team stats
-    await updatePlayerStats(goalScorers, cards);
-    await updateTeamStats(match.homeTeam, match.awayTeam, homeGoals, awayGoals);
+    // // Update player and team stats
+    // await updatePlayerStats(goalScorers, cards);
+    // await updateTeamStats(match.homeTeam, match.awayTeam, homeGoals, awayGoals);
 
     res.status(200).json(match);
   } catch (err) {
@@ -115,4 +125,3 @@ exports.deleteMatch = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-

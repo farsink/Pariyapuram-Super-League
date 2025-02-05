@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const tabs = ["Matches", "Fixtures", "Overview", "Standings", "Top Players"];
+const tabs = ["Matches", "Results", "Overview", "Standings", "Top Players"];
 
 const MatchTabs = ({ activeTab, onTabChange }) => {
   const [isSticky, setIsSticky] = useState(false);

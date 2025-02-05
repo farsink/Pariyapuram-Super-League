@@ -1,29 +1,7 @@
 import React, { useState } from "react";
-
-const standings = [
-  {
-    position: 1,
-    team: {
-      name: "Liverpool",
-      logo: "https://resources.premierleague.com/premierleague/badges/t14.svg",
-    },
-  },
-  {
-    position: 2,
-    team: {
-      name: "Arsenal",
-      logo: "https://resources.premierleague.com/premierleague/badges/t3.svg",
-    },
-    played: 23,
-    won: 13,
-    drawn: 8,
-    lost: 2,
-    goalDifference: 23,
-    points: 47,
-    form: ["W", "D", "W", "D", "W"],
-  },
-  // ... (previous standings data with form added)
-];
+import { useSelector } from "react-redux";
+import { serverurl } from "../../Api/ServerURL";
+import Loader from "../Customs/Loader";
 
 const FormBadge = ({ result }) => {
   const bgColor = result === "W" ? "bg-green-600" : result === "D" ? "bg-gray-500" : "bg-red-600";
@@ -39,17 +17,39 @@ const FormBadge = ({ result }) => {
 
 const Standings = () => {
   const [showForm, setShowForm] = useState(false);
+  const { teams, status, error } = useSelector((state) => state.teams);
+
+  const standings =
+    teams &&
+    [...teams] // Create a shallow copy of the array
+      .sort((a, b) => a.currentPosition - b.currentPosition) // Sort by currentPosition
+      .map((team, index) => ({
+        position: index + 1, // Use currentPosition if available, otherwise use index + 1
+        team: {
+          name: team.name,
+          logo: `${serverurl}/uploads/${team.logo}`,
+        },
+        played: team.stats.matchesPlayed || 0, // Default to 0 if undefined
+        won: team.stats.wins || 0, // Default to 0 if undefined
+        drawn: team.stats.draws || 0, // Default to 0 if undefined
+        lost: team.stats.losses || 0, // Default to 0 if undefined
+        goalDifference: team.stats.goalDifference || 0, // Default to 0 if undefined
+        points: team.currentPoints || 0, // Default to 0 if undefined
+        form: team.form || [], // Default to empty array if undefined
+      }));
+
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold">Premier League Table</h2>
+          <h2 className="text-xl font-bold sm:text-2xl">Premier League Table</h2>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Form</span>
+            <span className="text-sm text-gray-600 sm:text-base">Form</span>
             <button
               onClick={() => setShowForm(!showForm)}
-              className={`w-12 h-6 bg-gray-200 rounded-full relative  hover:bg-gray-300 ${
+              className={`w-12 h-6 bg-gray-200 rounded-full relative hover:bg-gray-300 ${
                 showForm ? "bg-background hover:bg-background" : ""
               }`}
             >
@@ -61,52 +61,57 @@ const Standings = () => {
             </button>
           </div>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-sm text-gray-600 border-b">
-                <th className="py-4 px-4 text-left">Pos</th>
-                <th className="py-4 px-4 text-left">Team</th>
-                <th className="py-4 px-4 text-center">P</th>
-                <th className="py-4 px-4 text-center">W</th>
+              <tr className="text-sm text-gray-600 border-b sm:text-base">
+                <th className="py-2 px-2 text-left sm:py-4 sm:px-4">Pos</th>
+                <th className="py-2 px-2 text-left sm:py-4 sm:px-4">Team</th>
+                <th className="py-2 px-2 text-center sm:py-4 sm:px-4">P</th>
+                <th className="py-2 px-2 text-center sm:py-4 sm:px-4">W</th>
                 {!showForm && (
                   <>
-                    <th className="py-4 px-4 text-center">D</th>
-                    <th className="py-4 px-4 text-center">L</th>
-                    <th className="py-4 px-4 text-center">+/-</th>
-                    <th className="py-4 px-4 text-center">PTS</th>
+                    <th className="py-2 px-2 text-center sm:py-4 sm:px-4">D</th>
+                    <th className="py-2 px-2 text-center sm:py-4 sm:px-4">L</th>
+                    <th className="py-2 px-2 text-center sm:py-4 sm:px-4">+/-</th>
+                    <th className="py-2 px-2 text-center sm:py-4 sm:px-4">PTS</th>
                   </>
                 )}
-                {showForm && <th className="py-4 px-4 text-center">Form</th>}
+                {showForm && <th className="py-2 px-2 text-center sm:py-4 sm:px-4">Form</th>}
               </tr>
             </thead>
             <tbody>
-              {standings.map((team) => (
+              {status === "loading" && <Loader/>}
+              {status === "failed" && <tr>Error: {error}</tr>}
+              {standings?.map((team) => (
                 <tr key={team.position} className="border-b hover:bg-gray-50 transition-colors">
-                  <td className="py-4 px-4 font-medium">{team.position}</td>
-                  <td className="py-4 px-4">
-                    <div className="flex items-center gap-3">
+                  <td className="py-2 px-2 font-medium sm:py-4 sm:px-4">{team.position}</td>
+                  <td className="py-2 px-2 sm:py-4 sm:px-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <img
                         src={team.team.logo}
                         alt={team.team.name}
-                        className="w-6 h-6 object-contain"
+                        className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-full"
                       />
-                      <span className="font-medium">{team.team.name}</span>
+                      <span className="font-medium text-sm sm:text-base">{team.team.name}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-center">{team.played}</td>
-                  <td className="py-4 px-4 text-center">{team.won}</td>
+                  <td className="py-2 px-2 text-center sm:py-4 sm:px-4">{team.played}</td>
+                  <td className="py-2 px-2 text-center sm:py-4 sm:px-4">{team.won}</td>
                   {!showForm && (
                     <>
-                      <td className="py-4 px-4 text-center">{team.drawn}</td>
-                      <td className="py-4 px-4 text-center">{team.lost}</td>
-                      <td className="py-4 px-4 text-center">{team.goalDifference}</td>
-                      <td className="py-4 px-4 text-center font-bold">{team.points}</td>
+                      <td className="py-2 px-2 text-center sm:py-4 sm:px-4">{team.drawn}</td>
+                      <td className="py-2 px-2 text-center sm:py-4 sm:px-4">{team.lost}</td>
+                      <td className="py-2 px-2 text-center sm:py-4 sm:px-4">
+                        {team.goalDifference}
+                      </td>
+                      <td className="py-2 px-2 text-center font-bold sm:py-4 sm:px-4">
+                        {team.points}
+                      </td>
                     </>
                   )}
                   {showForm && (
-                    <td className="py-4 px-4">
+                    <td className="py-2 px-2 sm:py-4 sm:px-4">
                       <div className="flex gap-1 justify-center">
                         {team.form.map((result, index) => (
                           <FormBadge key={index} result={result} />

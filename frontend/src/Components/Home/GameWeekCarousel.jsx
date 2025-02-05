@@ -1,9 +1,11 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import Loader from "../Customs/Loader";
 
 const GameWeekCarousel = ({ activeWeek, onWeekChange }) => {
   const scrollRef = useRef(null);
-
+  const { matches, status } = useSelector((state) => state.matches);
   const scroll = (direction) => {
     if (scrollRef.current) {
       const scrollAmount = direction === "left" ? -200 : 200;
@@ -11,11 +13,21 @@ const GameWeekCarousel = ({ activeWeek, onWeekChange }) => {
     }
   };
 
-  const gameWeeks = [
-    { id: 23, label: "Game Week 23" },
-    { id: 24, label: "Game Week 24" },
-    { id: 25, label: "Game Week 25" },
-  ];
+  const gameWeeks = matches
+    ? Array.from(new Set(matches.map((match) => match.round.toUpperCase()))).map(
+        (round, index) => ({ id: index + 1, label: round })
+      )
+    : [];
+
+  useEffect(() => {
+    if (scrollRef.current && activeWeek) {
+      const activeIndex = gameWeeks.findIndex((week) => week.label === activeWeek);
+      if (activeIndex !== -1) {
+        const scrollAmount = activeIndex * 200; // Adjust 200 based on button width + gap
+        scrollRef.current.scrollTo({ left: scrollAmount, behavior: "smooth" });
+      }
+    }
+  }, [activeWeek, gameWeeks]);
 
   return (
     <div className="bg-white py-4 border-b">
@@ -25,14 +37,15 @@ const GameWeekCarousel = ({ activeWeek, onWeekChange }) => {
         </button>
 
         <div ref={scrollRef} className="flex overflow-x-hidden scroll-smooth gap-4">
-          {gameWeeks.map((week) => (
+          {status === "loading" && <Loader />}
+          {gameWeeks?.map((week) => (
             <button
               key={week.id}
-              onClick={() => onWeekChange(week.id)}
+              onClick={() => onWeekChange(week.label)}
               className={`
                 px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap
                 ${
-                  week.id === activeWeek
+                  week.label === activeWeek
                     ? "bg-[#37003c] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }
