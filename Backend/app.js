@@ -11,13 +11,21 @@ const TeamRoutes = require("./Routes/TeamRoutes");
 const MatchRoutes = require("./Routes/MatchRoute");
 const SeasonRoutes = require("./Routes/SeasonRoutes");
 const TournamentRoutes = require("./Routes/TournamentRoute");
+const NewsRoutes = require("./Routes/NewsRoute");
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS
+app.use(
+  cors({
+    origin: "*", // Allow necessary headers
+  })
+);
+// Enable CORS
+
+app.options("*", cors());
 app.use(morgan("dev")); // Log requests
 app.use(bodyParser.json()); // Parse JSON requests
 
@@ -43,6 +51,7 @@ app.use("/api/team", TeamRoutes);
 app.use("/api/match", MatchRoutes);
 app.use("/api/season", SeasonRoutes);
 app.use("/api/tournament", TournamentRoutes);
+app.use("/api/news", NewsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

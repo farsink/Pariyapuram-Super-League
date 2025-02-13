@@ -112,18 +112,17 @@ function MatchesManagement() {
     dispatch(fetchMatches());
   }, [dispatch]);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
     // Extract form data
-    const date = new Date(formData.get("date"))
+    const date = new Date(formData.get("date"));
     const homeTeamName = formData.get("homeTeam");
     const awayTeamName = formData.get("awayTeam");
     const round = formData.get("round");
     const status = formData.get("status");
-console.log(date);
+
 
     // Construct goal scorers array
     const goalScorers = [
@@ -282,6 +281,10 @@ console.log(date);
     }
   };
   const handleEdit = (match) => () => {
+ 
+
+
+// Scroll to the top of the page
     setEditingMatch(match);
     setShowForm(true);
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -326,6 +329,27 @@ console.log(date);
     setSelectedRedCards([]);
     setShowForm(false);
   };
+  function convertToIST(utcDateString) {
+    // Parse the UTC date string into a Date object
+    const utcDate = new Date(utcDateString);
+
+    // Convert the UTC date to IST using toLocaleString
+    const istDateTime = utcDate.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata", // Convert to IST
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Use 24-hour format
+    });
+
+    // Reformat the IST date-time string into YYYY-MM-DDTHH:mm
+    const [datePart, timePart] = istDateTime.split(", ");
+    const [day, month, year] = datePart.split("/");
+    const [hour, minute] = timePart.split(":");
+    return `${year}-${month}-${day}T${hour}:${minute}`;
+  }
 
   const hometeamplayers = editingMatch?.homeTeam?.players || [];
   const awayteamplayers = editingMatch?.awayTeam?.players || [];
@@ -361,7 +385,7 @@ console.log(date);
                 <input
                   type="datetime-local"
                   name="date"
-                  defaultValue={new Date(editingMatch.date).toISOString().slice(0, 16)}
+                  defaultValue={editingMatch ? convertToIST(editingMatch.date) : ""}
                   className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
                   required
                 />

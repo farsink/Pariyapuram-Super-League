@@ -10,6 +10,15 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
   },
 });
+// news storage
+const newsStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/news/"); // Folder for News images
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
+  },
+});
 
 // File filter to allow only images
 const fileFilter = (req, file, cb) => {
@@ -31,4 +40,11 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-module.exports = upload;
+// Initialize Multer for News
+const newsUpload = multer({
+  storage: newsStorage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+});
+
+module.exports = { upload, newsUpload };

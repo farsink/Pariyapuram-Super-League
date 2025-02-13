@@ -38,10 +38,8 @@ const Standings = () => {
         form: team.form || [], // Default to empty array if undefined
       }));
 
-
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-2  py-8">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-bold sm:text-2xl">Premier League Table</h2>
@@ -50,11 +48,11 @@ const Standings = () => {
             <button
               onClick={() => setShowForm(!showForm)}
               className={`w-12 h-6 bg-gray-200 rounded-full relative hover:bg-gray-300 ${
-                showForm ? "bg-background hover:bg-background" : ""
+                showForm && "bg-green-400 hover:bg-[#37003c]"
               }`}
             >
               <div
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${
+                className={`absolute top-1 w-4 h-4 bg-accent rounded-full shadow-sm transition-transform ${
                   showForm ? "right-1" : "left-1"
                 }`}
               ></div>
@@ -81,7 +79,7 @@ const Standings = () => {
               </tr>
             </thead>
             <tbody>
-              {status === "loading" && <Loader/>}
+              {status === "loading" && <Loader />}
               {status === "failed" && <tr>Error: {error}</tr>}
               {standings?.map((team) => (
                 <tr key={team.position} className="border-b hover:bg-gray-50 transition-colors">

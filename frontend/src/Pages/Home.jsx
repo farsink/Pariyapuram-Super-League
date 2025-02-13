@@ -9,21 +9,21 @@ import NewsSection from "../Components/Home/NewsSection";
 import Standings from "../Components/Home/Standings";
 import TopPlayers from "../Components/Home/TopPlayers";
 import { useSelector } from "react-redux";
+import Results from "../Components/Results";
+import Videos from "./Videos";
 
 function Home() {
   const [activeGameWeek, setActiveGameWeek] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("Matches");
   const { matches, status } = useSelector((state) => state.matches);
 
-  const defaultGameweek = matches?.find((m) => m.status === "scheduled")?.round;
-
+  const defaultGameweek = matches?.find((m) => m.status === "scheduled")?.round|| "Not FOund";
 
   useEffect(() => {
     if (defaultGameweek) {
       setActiveGameWeek(defaultGameweek?.toUpperCase() || ""); // Set default gameweek if available, otherwise set to SEMI FINAL
     }
   }, [defaultGameweek, matches]);
-  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -35,10 +35,8 @@ function Home() {
         <div className="bg-accent bg-opacity-5">
           {/* Hero Section */}
           <HeroSection />
-
           {/* Match Tabs */}
           <MatchTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
           {/* Content area */}
           {activeTab === "Matches" ? (
             <>
@@ -55,7 +53,9 @@ function Home() {
             <Standings />
           ) : activeTab === "Top Players" ? (
             <TopPlayers />
-          ) : null}
+          ) : activeTab === "Overview" ? (
+            <Videos />
+          ) : null}{" "}
         </div>
       </div>
 

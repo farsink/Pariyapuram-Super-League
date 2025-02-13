@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes, useLocation, Outlet } from "react-router-dom";
 import Navbarpsl from "./Components/Navbarpsl";
 import News from "./Pages/News";
-import Tickets from "./Pages/Tickets";
+// import Tickets from "../src/Components/Tickets/Tickets";
 import Auth from "./Pages/Auth";
 import History from "./Pages/History";
 import Home from "./Pages/Home";
@@ -24,6 +24,10 @@ import { useDispatch } from "react-redux";
 import { fetchMatches } from "./Redux/slices/MatchSlice";
 import { fetchTeams } from "./Redux/slices/TeamSlice";
 import { fetchPlayers } from "./Redux/slices/PlayerSlice";
+import MatchResult from "./Components/Home/MatchResult";
+import Tickets from "./Components/Tickets/Tickets";
+
+
 
 function App() {
   const location = useLocation();
@@ -43,6 +47,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Home />} />
+          <Route path="/match/:matchId" element={<MatchResult />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/news" element={<News />} />
           <Route path="/tickets" element={<Tickets />} />

@@ -1,6 +1,6 @@
 const express = require("express");
 const teamController = require("../Controller/TeamController.js");
-const upload = require("../utils/Multer.js");
+const { upload } = require("../utils/Multer.js");
 
 const router = express.Router();
 

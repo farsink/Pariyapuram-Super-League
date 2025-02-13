@@ -1,38 +1,58 @@
 import React from "react";
 import { Trophy, TrendingUp, Users, Calendar } from "lucide-react";
-
-const stats = [
-  {
-    id: 1,
-    title: "Current Leaders",
-    value: "Liverpool",
-    icon: <Trophy className="w-6 h-6" />,
-    change: "+2 Points",
-  },
-  {
-    id: 2,
-    title: "Top Scorer",
-    value: "Haaland",
-    icon: <TrendingUp className="w-6 h-6" />,
-    change: "21 Goals",
-  },
-  {
-    id: 3,
-    title: "Most Assists",
-    value: "De Bruyne",
-    icon: <Users className="w-6 h-6" />,
-    change: "12 Assists",
-  },
-  {
-    id: 4,
-    title: "Next Matchday",
-    value: "Feb 10",
-    icon: <Calendar className="w-6 h-6" />,
-    change: "Gameweek 24",
-  },
-];
+import { useSelector } from "react-redux";
+import { getTopGoalkeepers } from "../../utils/StatiticsFuntions";
 
 const OverviewSection = () => {
+  const { matches, status } = useSelector((state) => state.matches);
+  const { teams } = useSelector((state) => state.teams);
+  const { players } = useSelector((state) => state.players);
+
+  const topGoalKeeper = getTopGoalkeepers(matches);
+
+
+  const stats = [
+    {
+      id: 1,
+      title: "Current Leaders",
+      value: (teams && teams[0]?.name.toUpperCase()) || "Not Available",
+      icon: <Trophy className="w-6 h-6" />,
+      change: teams && teams[0] ? `+${teams[0].currentPoints}` : "N/A",
+    },
+    {
+      id: 2,
+      title: "Top Scorer",
+      value: (players && players[0]?.name.toUpperCase()) || "Not Available",
+      icon: <TrendingUp className="w-6 h-6" />,
+      change: players && players[0]?.stats?.goals ? `${players[0].stats.goals} Goals` : "0 Goals",
+    },
+    {
+      id: 3,
+      title: "Most Clean Sheats",
+      value: topGoalKeeper.length > 0 ? topGoalKeeper[0]?.name.toUpperCase() : "Not Available",
+      icon: <Users className="w-6 h-6" />,
+      change: topGoalKeeper.length > 0 ? `${topGoalKeeper[0]?.cleanSheets} Clean Sheets` : "N/A",
+    },
+    {
+      id: 4,
+      title: "Next Matchday",
+      value:
+        matches && matches.length > 0
+          ? (() => {
+              const nextMatch = matches.find((match) => match.status === "scheduled");
+              return nextMatch
+                ? new Date(nextMatch.date).toLocaleString("en-IN", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "No Match Scheduled";
+            })()
+          : "No Match Scheduled",
+      icon: <Calendar className="w-6 h-6" />,
+      change: "",
+    },
+  ];
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6">Season Overview</h2>

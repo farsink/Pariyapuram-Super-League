@@ -10,8 +10,8 @@ const teamSchema = new mongoose.Schema({
   stats: {
     matchesPlayed: { type: Number, default: 0 }, // Matches played
     wins: { type: Number, default: 0 }, // Matches won
-    drawn: { type: Number, default: 0 }, // Matches drawn
-    lost: { type: Number, default: 0 }, // Matches lost
+    draws: { type: Number, default: 0 }, // Matches drawn
+    losses: { type: Number, default: 0 }, // Matches lost
     goalsScored: { type: Number, default: 0 }, // Goals scored by the team
     goalsConceded: { type: Number, default: 0 }, // Goals conceded by the team
     goalDifference: { type: Number, default: 0 }, // Goal difference (goalsScored - goalsConceded)

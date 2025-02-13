@@ -5,6 +5,7 @@ const path = require("path");
 // common funtion To process team data
 const processTeamData = async (req) => {
   const { name, manager, currentPosition, currentPoints, players, stats } = req.body;
+  console.log(req.body);
 
   const playerNamesArray = players
     ? players.split(",").map((name) => name.trim().replace(/['"]+/g, "").trim())
@@ -26,14 +27,16 @@ const processTeamData = async (req) => {
 
   const parsedStats = typeof stats === "string" ? JSON.parse(stats) : stats;
 
+  const GoalDiff = (parsedStats.goalsScored - parsedStats.goalsConceded).toString() || "0";
+
   return {
     name: JSON.parse(name),
-    logo: req.file ? req.file.filename :null, // Save the file path if a logo is uploaded
+    logo: req.file ? req.file.filename : null, // Save the file path if a logo is uploaded
     manager: Managersarray,
     currentPosition,
     currentPoints,
     players: playerIds,
-    stats: parsedStats,
+    stats: { ...parsedStats, goalDifference: GoalDiff },
   };
 };
 
@@ -55,7 +58,10 @@ exports.getAllTeams = async (req, res) => {
       path: "players",
       select: "name",
     });
-    res.status(200).json(teams);
+    const sortedTeams = teams.sort((a, b) => {
+      return (a.currentPosition || 0) - (b.currentPosition || 0);
+    });
+    res.status(200).json(sortedTeams);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -119,3 +119,14 @@ export const updateMatch = async (matchId, matchData) => {
  );
  return response;
 };
+
+
+{"News"}
+
+// fetch all news
+
+export const getNews = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/news/all`, "GET", null, null);
+
+  return await response;
+};

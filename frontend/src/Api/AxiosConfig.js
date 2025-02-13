@@ -4,7 +4,9 @@ export const AxiosConfig = async (url, method, ReqHeader, ReqBody) => {
   const reqConfig = {
     url,
     method: method,
-    headers: ReqHeader ? ReqHeader : { "Content-Type": "application/json" },
+    headers: ReqHeader
+      ? ReqHeader
+      : { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
     data: ReqBody,
   };
   console.log("Request Config:", reqConfig);
@@ -13,7 +15,7 @@ export const AxiosConfig = async (url, method, ReqHeader, ReqBody) => {
     return res;
   } catch (err) {
     console.log("Error:", err);
-    
+
     return err;
   }
 };

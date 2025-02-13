@@ -43,7 +43,7 @@ exports.getAllMatches = async (req, res) => {
         select: "name logo players",
         populate: {
           path: "players",
-          select: "name",
+          select: "name position",
         },
       }) // Populate home team name
       .populate({
@@ -51,7 +51,7 @@ exports.getAllMatches = async (req, res) => {
         select: "name logo players",
         populate: {
           path: "players",
-          select: "name",
+          select: "name position",
         },
       })
       .populate({
@@ -103,9 +103,9 @@ exports.updateMatch = async (req, res) => {
       { new: true }
     );
 
-    // // Update player and team stats
-    // await updatePlayerStats(goalScorers, cards);
-    // await updateTeamStats(match.homeTeam, match.awayTeam, homeGoals, awayGoals);
+    // Update player and team stats
+    await updatePlayerStats(goalScorers, cards);
+    await updateTeamStats(match.homeTeam, match.awayTeam, homeGoals, awayGoals);
 
     res.status(200).json(match);
   } catch (err) {

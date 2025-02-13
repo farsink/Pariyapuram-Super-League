@@ -11,7 +11,7 @@ import {
 } from "../../Redux/slices/TeamSlice";
 import { serverurl } from "../../Api/ServerURL";
 import Swal from "sweetalert2";
-import "./Global.css"
+import "./Global.css";
 import { Slide, toast, ToastContainer } from "react-toastify";
 
 const TeamsContainer = styled.div`
@@ -87,6 +87,7 @@ function TeamsManagement() {
   const dispatch = useDispatch();
   const { teams, status, error } = useSelector((state) => state.teams);
 
+
   // Fetch teams on component mount
   useEffect(() => {
     dispatch(fetchTeams());
@@ -133,6 +134,9 @@ function TeamsManagement() {
         wins: formData.get("wins"),
         draws: formData.get("draws"),
         losses: formData.get("losses"),
+        matchesPlayed: formData.get("matchesPlayed"),
+        goalsScored: formData.get("goalsScored"),
+        goalsConceded: formData.get("goalsConceded"),
       })
     );
 
@@ -140,7 +144,6 @@ function TeamsManagement() {
       let response;
       if (editingTeam) {
         // Update existing team
-      
 
         response = await dispatch(updateTeamAsync({ id: editingTeam._id, formData: apiFormData }));
         toast.success("Team updated");
@@ -149,90 +152,88 @@ function TeamsManagement() {
         response = await dispatch(addTeamAsync(apiFormData)); // Send FormData directly
         toast.success("Team added");
       }
-     
     } catch (error) {
       console.error("Error:", error);
     }
-
+    dispatch(fetchTeams());
     setShowForm(false);
     setEditingTeam(null);
     setSelectedTeam(null); // Close modal after editing
   };
 
- const handleDelete = async (id) => {
-   try {
-     // Confirmation dialog
-     const confirmation = await Swal.fire({
-       title: "Are you sure?",
-       text: "You won't be able to revert this!",
-       icon: "warning",
-       showCancelButton: true,
-       confirmButtonColor: "#ef4444", // Red for danger actions
-       cancelButtonColor: "#6c757d", // Gray for cancel
-       confirmButtonText: "Yes, delete it!",
-       customClass: {
-         popup: "custom-swal-popup", // Custom class for styling
-         title: "custom-swal-title", // Custom class for title
-         content: "custom-swal-content", // Custom class for content
-         actions: "custom-swal-actions", // Custom class for buttons
-       },
-       width: "300px", // Smaller width
-     });
+  const handleDelete = async (id) => {
+    try {
+      // Confirmation dialog
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ef4444", // Red for danger actions
+        cancelButtonColor: "#6c757d", // Gray for cancel
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+          popup: "custom-swal-popup", // Custom class for styling
+          title: "custom-swal-title", // Custom class for title
+          content: "custom-swal-content", // Custom class for content
+          actions: "custom-swal-actions", // Custom class for buttons
+        },
+        width: "300px", // Smaller width
+      });
 
-     // If user confirms deletion
-     if (confirmation.isConfirmed) {
-       const response = await dispatch(deleteTeamAsync(id));
+      // If user confirms deletion
+      if (confirmation.isConfirmed) {
+        const response = await dispatch(deleteTeamAsync(id));
 
-
-       if (response.meta.requestStatus === "fulfilled") {
-         // Success alert
-         Swal.fire({
-           title: "Deleted!",
-           text: "Team deleted successfully!",
-           icon: "success",
-           timer: 1500,
-           customClass: {
-             popup: "custom-swal-popup", // Custom class for styling
-             title: "custom-swal-title", // Custom class for title
-             content: "custom-swal-content", // Custom class for content
-           },
-           width: "300px", // Smaller width
-         });
-       } else {
-         // Error alert
-         Swal.fire({
-           title: "Error!",
-           text: "Error deleting team",
-           icon: "error",
-           timer: 1500,
-           customClass: {
-             popup: "custom-swal-popup", // Custom class for styling
-             title: "custom-swal-title", // Custom class for title
-             content: "custom-swal-content", // Custom class for content
-           },
-           width: "300px", // Smaller width
-         });
-       }
-     }
-   } catch (error) {
-     console.error("Error deleting team:", error);
-     // Error alert in case of unexpected errors
-     Swal.fire({
-       title: "Error!",
-       text: "An unexpected error occurred while deleting the team.",
-       icon: "error",
-       timer: 1500,
-       customClass: {
-         popup: "custom-swal-popup", // Custom class for styling
-         title: "custom-swal-title", // Custom class for title
-         content: "custom-swal-content", // Custom class for content
-       },
-       width: "300px", // Smaller width
-     });
-   } finally {
-     setSelectedTeam(null); // Close modal after deleting
-   }
- };
+        if (response.meta.requestStatus === "fulfilled") {
+          // Success alert
+          Swal.fire({
+            title: "Deleted!",
+            text: "Team deleted successfully!",
+            icon: "success",
+            timer: 1500,
+            customClass: {
+              popup: "custom-swal-popup", // Custom class for styling
+              title: "custom-swal-title", // Custom class for title
+              content: "custom-swal-content", // Custom class for content
+            },
+            width: "300px", // Smaller width
+          });
+        } else {
+          // Error alert
+          Swal.fire({
+            title: "Error!",
+            text: "Error deleting team",
+            icon: "error",
+            timer: 1500,
+            customClass: {
+              popup: "custom-swal-popup", // Custom class for styling
+              title: "custom-swal-title", // Custom class for title
+              content: "custom-swal-content", // Custom class for content
+            },
+            width: "300px", // Smaller width
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting team:", error);
+      // Error alert in case of unexpected errors
+      Swal.fire({
+        title: "Error!",
+        text: "An unexpected error occurred while deleting the team.",
+        icon: "error",
+        timer: 1500,
+        customClass: {
+          popup: "custom-swal-popup", // Custom class for styling
+          title: "custom-swal-title", // Custom class for title
+          content: "custom-swal-content", // Custom class for content
+        },
+        width: "300px", // Smaller width
+      });
+    } finally {
+      setSelectedTeam(null); // Close modal after deleting
+    }
+  };
 
   if (status === "error") {
     return (
@@ -377,6 +378,34 @@ function TeamsManagement() {
                       />
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">
+                      Matches Played,GoalScored,GoalConceded
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <input
+                        type="number"
+                        name="matchesPlayed"
+                        defaultValue={editingTeam?.stats.matchesPlayed}
+                        placeholder="Matches Played"
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      />
+                      <input
+                        type="number"
+                        name="goalsScored"
+                        defaultValue={editingTeam?.stats.goalsScored}
+                        placeholder="Goal Scored"
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      />
+                      <input
+                        type="number"
+                        name="goalsConceded"
+                        defaultValue={editingTeam?.stats.goalsConceded}
+                        placeholder="Goal Conceded"
+                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -407,7 +436,10 @@ function TeamsManagement() {
                 <div
                   key={team._id}
                   className="team-card p-6 cursor-pointer"
-                  onClick={() => setSelectedTeam(team)}
+                  onClick={() => {
+                    setSelectedTeam(team);
+                    setShowForm(false);
+                  }}
                 >
                   <div className="flex items-center space-x-4 mb-4">
                     <img

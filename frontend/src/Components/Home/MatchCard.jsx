@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { serverurl } from "../../Api/ServerURL";
+import { useNavigate } from "react-router-dom";
 
 const MatchCard = ({ match }) => {
+
+  const navigate = useNavigate();
 
   let Matchdate = match?.find((match) => match.date)?.date;
   return (
@@ -28,7 +31,11 @@ const MatchCard = ({ match }) => {
       {/* Matches List */}
       <div className="divide-y">
         {match?.map((game) => (
-          <div key={game._id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+          <div
+            key={game._id}
+            className="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+            onClick={() => navigate(`/match/${game._id}`)}
+          >
             <div className="flex items-center justify-between">
               {/* Home Team */}
               <div className="flex items-center gap-2 sm:gap-4 flex-1">
@@ -46,22 +53,37 @@ const MatchCard = ({ match }) => {
                       animationIterationCount: "infinite",
                     }}
                   >
-                    {game.homeTeam.name}
+                    {game.homeTeam.name.toUpperCase()}
                   </span>
                 </div>
               </div>
 
               {/* Match Time */}
-              <div className="flex items-center justify-center px-4 min-w-[60px]">
-                <span className="font-bold text-base sm:text-lg">
-                  {new Date(game.date).toLocaleString("en-IN", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </span>
-              </div>
-
+              {game.status === "completed" ? (
+                <>
+                  <div className="flex items-center justify-center px-4 min-w-[60px]">
+                    <div className="font-bold text-base sm:text-lg">
+                      <span className="border text-textColor border-solid p-2 bg-[#37003c] rounded">
+                        {game.homeGoals}
+                      </span>
+                      :
+                      <span className="border text-textColor border-solid p-2 bg-[#37003c] rounded">
+                        {game.awayGoals}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-center px-4 min-w-[60px]">
+                  <span className="font-bold text-base sm:text-lg">
+                    {new Date(game.date).toLocaleTimeString("en-IN", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                  </span>
+                </div>
+              )}
               {/* Away Team */}
               <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end">
                 <div className="relative overflow-hidden whitespace-nowrap max-w-[100px] sm:max-w-[150px]">
@@ -73,7 +95,7 @@ const MatchCard = ({ match }) => {
                       animationIterationCount: "infinite",
                     }}
                   >
-                    {game.awayTeam.name}
+                    {game.awayTeam.name.toUpperCase()}
                   </span>
                 </div>
                 <img
