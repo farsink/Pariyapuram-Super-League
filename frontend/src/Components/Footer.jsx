@@ -19,7 +19,7 @@ const socialLinks = [
   {
     id: 4,
     name: "Youtube",
-    handle: "@STRIKERSPARIYAPURAM",
+    handle: "@strikerspariyapuram",
     icon: <Youtube className="w-8 h-8" />,
     url: "https://www.youtube.com/@STRIKERSPARIYAPURAM",
   },
@@ -44,7 +44,7 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1a1a1a] text-white">
+    <footer className="bg-[#1a1a1a] text-white z-50">
       {/* Social Media Section */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold mb-8 text-textColor">Follow strikers club pariyapuram</h2>

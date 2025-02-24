@@ -12,7 +12,9 @@ const MatchRoutes = require("./Routes/MatchRoute");
 const SeasonRoutes = require("./Routes/SeasonRoutes");
 const TournamentRoutes = require("./Routes/TournamentRoute");
 const NewsRoutes = require("./Routes/NewsRoute");
-
+const SeatsRoutes = require("./Routes/SeatRoutes");
+const TicketRoute = require("./Routes/TicketRoute");
+const PaymentRoute = require("./Routes/PaymentRoute");
 dotenv.config();
 
 const app = express();
@@ -44,7 +46,7 @@ app.use((req, res, next) => {
 
 // Static files
 app.use("/uploads", express.static("uploads"));
-
+app.use("/news", express.static("uploads/news"));
 // Routes
 app.use("/api/player", playerRoutes);
 app.use("/api/team", TeamRoutes);
@@ -52,6 +54,9 @@ app.use("/api/match", MatchRoutes);
 app.use("/api/season", SeasonRoutes);
 app.use("/api/tournament", TournamentRoutes);
 app.use("/api/news", NewsRoutes);
+app.use("/api/seats", SeatsRoutes);
+app.use("/api/payment", PaymentRoute);
+app.use("/api/ticket", TicketRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

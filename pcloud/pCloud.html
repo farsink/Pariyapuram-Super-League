@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pcloud SDK Example</title>
+    <!-- Include the Pcloud SDK -->
+    <script type="text/javascript" src="https://unpkg.com/pcloud-sdk-js@latest/dist/pcloudsdk.js"></script>
+  </head>
+  <body>
+    <input type="file" id="files" />
+    <button id="submit-btn">Submit</button>
+
+    <script>
+      window.onload = async function () {
+        if (typeof pcloud === "undefined") {
+          console.error("Pcloud SDK is not loaded");
+          return;
+        }
+
+        document.getElementById("submit-btn").onclick = async function () {
+          const ACC_TOKEN = "YOUR_ACCESS_TOKEN";
+          await pcloud.auth(ACC_TOKEN);
+          pcloud
+            .ref()
+            .then(async (e) => {
+              const fileInput = document.getElementById("files");
+              if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                e.uploadFile(file, file.name, (progress) => {
+                  console.log("Upload Progress:", progress);
+                })
+                  .then(() => {
+                    console.log("File uploaded successfully");
+                  })
+                  .catch((error) => {
+                    console.error("Error uploading file:", error);
+                  });
+              } else {
+                console.log("No file selected");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        };
+      };
+    </script>
+  </body>
+</html>

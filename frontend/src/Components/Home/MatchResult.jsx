@@ -119,8 +119,10 @@ const MatchResult = () => {
               <div className="flex flex-col items-center mx-4">
                 {match?.status === "completed" ? (
                   <>
-                    <div className="text-3xl md:text-6xl font-bold">
-                      {match?.homeGoals}-{match?.awayGoals}
+                    <div className="text-xl md:text-6xl font-bold flex items-center justify-center">
+                      <span>{match?.homeGoals}</span>
+                      <span className="mx-1">-</span>
+                      <span>{match?.awayGoals}</span>
                     </div>
                     <div className="text-sm font-medium">
                       <span className="uppercase">FT</span>

@@ -14,6 +14,6 @@ router.get("/all", getAllNews);
 router.put("/update/:id", newsUpload.single("image"), updateNews);
 
 // Delete News
-router.delete("/delete/:id", deleteNews);
+router.delete("/:id", deleteNews);
 
 module.exports = router;

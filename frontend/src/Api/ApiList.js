@@ -130,3 +130,45 @@ export const getNews = async () => {
 
   return await response;
 };
+
+
+{"Seat Availablity"}
+
+// fetch match seat availability
+
+export const getSeatAvailability = async (matchId) => {
+  const response = await AxiosConfig(`${serverurl}/api/seats/${matchId}`, "GET", null, null);
+
+  return await response;
+};
+
+
+{"Ticket"}
+
+// fetch all tickets
+
+export const getTickets = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/tickets/GetAll`, "GET", null, null);
+
+  return await response;
+};
+
+// create a new ticket
+
+export const createTicket = async (formData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/ticket/create`,
+    "POST",
+    {}, // Empty headers object
+    formData // Send FormData directly
+  );
+  return response;
+};
+
+//getbyID
+
+export const getTicketByID = async (ticketId) => {
+  const response = await AxiosConfig(`${serverurl}/api/ticket/${ticketId}`, "GET", null, null);
+
+  return await response;
+};

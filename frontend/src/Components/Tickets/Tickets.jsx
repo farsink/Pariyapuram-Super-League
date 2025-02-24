@@ -1,33 +1,30 @@
 import { ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import MatchCard from "./MatchCard";
+import SeatSelection from "./SeatSelection";
+import { useSelector } from "react-redux";
+import PaymentPage from "./PaymentPage";
+import PaymentEmbedded from "./PaymentEmbedded";
 
 function Tickets() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const { matches, status } = useSelector((state) => state.matches);
+  const [ticketData, setTicketData] = useState(null);
+  const location = useLocation();
 
-  const matches = [
-    {
-      id: 1,
-      league: "ENGLISH PREMIER LEAGUE",
-      homeTeam: "Everton",
-      awayTeam: "Liverpool",
-      date: "2025-02-12",
-      time: "19:30",
-      venue: "Goodison Park, Liverpool, United Kingdom",
-      price: "£45",
-    },
-    {
-      id: 2,
-      league: "ENGLISH PREMIER LEAGUE",
-      homeTeam: "Manchester City",
-      awayTeam: "Newcastle United",
-      date: "2025-02-15",
-      time: "15:00",
-      venue: "Etihad Stadium, Manchester, United Kingdom",
-      price: "£55",
-    },
+  // Determine if the URL path indicates the confirmation route
+  useEffect(() => {
+    if (location.pathname.endsWith("/confirmation")) {
+      setCurrentStep(4);
+    }
+  }, [location]);
+
+  const Scheduled = matches && [
+    ...matches
+      .filter((matches) => matches.status == "scheduled")
+      .map((match) => ({ ...match, venue: "ERA TURF,PUTHANAGADI" })),
   ];
 
   const steps = [
@@ -41,27 +38,49 @@ function Tickets() {
     setSelectedMatch(match);
     setCurrentStep(2);
   };
+
+  const handleTicketCreated = (ticket) => {
+    setTicketData(ticket);
+    setCurrentStep(3); // Move to payment step
+  };
   const renderStepIndicator = () => (
     <div className="w-full bg-white p-4 mb-6 rounded-lg shadow">
       <div className="flex justify-between items-center max-w-3xl mx-auto">
         {steps.map((step, index) => (
-          <div key={step.number} className="flex items-center">
-            <div className={`flex flex-col items-center ${index !== steps.length - 1 && "w-full"}`}>
+          <div
+            key={step.number}
+            className="flex items-center flex-1"
+            onClick={() => {
+              setCurrentStep(step.number);
+              setSelectedMatch(null);
+            }}
+          >
+            <div className="flex flex-col items-center w-full">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center 
+                transition-colors duration-300 ${
                   currentStep >= step.number ? "bg-[#37003C] text-white" : "bg-gray-200"
                 }`}
               >
                 {step.number}
               </div>
-              <span className="text-sm mt-1">{step.title}</span>
+              <span className="text-sm mt-1 text-center">{step.title}</span>
             </div>
+
             {index !== steps.length - 1 && (
               <div
-                className={`h-1 w-full mx-2 ${
-                  currentStep > step.number ? "bg-[#37003C]" : "bg-gray-200"
+                className={`h-1 w-full mx-2 relative transition-colors duration-300 ${
+                  currentStep > step.number
+                    ? "bg-[#37003C] text-[#37003C]"
+                    : "bg-gray-200 text-gray-200"
                 }`}
-              />
+              >
+                <div
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 
+                border-t-4 border-b-4 border-l-4 border-t-transparent 
+                border-b-transparent border-l-current"
+                />
+              </div>
             )}
           </div>
         ))}
@@ -115,13 +134,23 @@ function Tickets() {
 
           {currentStep === 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {matches.map((match) => (
-                <MatchCard key={match.id} match={match} onSelect={() => handleMatchSelect(match)} />
+              {Scheduled.map((match) => (
+                <MatchCard
+                  key={match._id}
+                  match={match}
+                  onSelect={() => handleMatchSelect(match)}
+                />
               ))}
             </div>
           )}
 
-          {/* {currentStep === 2 && selectedMatch && <SeatSelection match={selectedMatch} />} */}
+          {currentStep === 2 && selectedMatch && (
+            <SeatSelection match={selectedMatch} onTicketCreated={handleTicketCreated} />
+          )}
+          {currentStep === 3 && ticketData && <PaymentEmbedded ticket={ticketData} />}
+
+          {/* conformation */}
+          <Outlet />
         </div>
       </div>
     </div>

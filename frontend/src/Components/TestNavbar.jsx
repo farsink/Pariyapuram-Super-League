@@ -3,12 +3,15 @@ import { Menu, Search, User, X, ChevronDown } from "lucide-react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
+import "../App.css";
+import { useUserContext } from "../context/UserContext";
 
 const TestNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const { user } = useUser(); // Get user data from the context
+  const { user } = useUserContext(); // Get user data from the context
   const navigate = useNavigate();
+
   useEffect(() => {
     if (user) {
       setLoggedIn(true);
@@ -17,15 +20,19 @@ const TestNavbar = () => {
 
   return (
     <StyledWrapper className="font-oswald sticky top-0 z-50">
-      <nav className={`bg-black text-white ${isMenuOpen ? "mobile-menu-open" : ""} border-b-4 border-accent`}>
+      <nav
+        className={`bg-black text-white ${
+          isMenuOpen ? "mobile-menu-open" : ""
+        } border-b-4 border-accent`}
+      >
         <div className="max-w-7xl mx-auto px-4">
           {/* Main Navigation Bar */}
           <div className="flex items-center h-16 relative">
             {/* Left Section with Menu and Primary Links */}
-            <div className="flex items-center">
+            <div className="flex items-center ">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 nav-icon"
+                className="p-2 nav-icon lg:hidden"
                 aria-label="Menu"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -34,8 +41,8 @@ const TestNavbar = () => {
                 <Link to={"/tickets"} className="nav-link">
                   TICKETS
                 </Link>
-                <Link to={"/fixtures"} className="nav-link">
-                  FIXTURES
+                <Link to={"/gallery"} className="nav-link">
+                  GALLERY
                 </Link>
                 <Link to={"/videos"} className="nav-link">
                   VIDEOS
@@ -70,7 +77,7 @@ const TestNavbar = () => {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/login");
+                    user ? navigate("/profile") : navigate("/login");
                   }}
                   aria-label="Account"
                   className="p-2 nav-icon"
@@ -83,23 +90,23 @@ const TestNavbar = () => {
 
           {/* Dropdown Menu */}
           {isMenuOpen && (
-            <div className="mobile-menu ">
+            <div className="mobile-menu " onClick={() => setIsMenuOpen(false)}>
               <div className="px-4 py-3 space-y-2">
-                <a href="#" className="nav-link flex items-center justify-between">
+                <Link to="/news" className="nav-link flex items-center justify-between">
                   NEWS <ChevronDown size={16} />
-                </a>
-                <a href="#" className="nav-link flex items-center justify-between">
+                </Link>
+                <Link to="/gallery" className="nav-link flex items-center justify-between">
+                  GALLERY <ChevronDown size={16} />
+                </Link>
+                <Link to="/club" className="nav-link flex items-center justify-between">
                   TEAMS <ChevronDown size={16} />
-                </a>
-                <a href="#" className="nav-link flex items-center justify-between">
-                  CLUB <ChevronDown size={16} />
-                </a>
-                <a href="#" className="nav-link flex items-center justify-between">
-                  ALLIANZ STADIUM <ChevronDown size={16} />
-                </a>
-                <a href="#" className="nav-link flex items-center justify-between">
-                  ACADEMY <ChevronDown size={16} />
-                </a>
+                </Link>
+                <Link to="/history" className="nav-link flex items-center justify-between">
+                  HISTORY <ChevronDown size={16} />
+                </Link>
+                <Link to="/tickets" className="nav-link flex items-center justify-between">
+                  TICKETS <ChevronDown size={16} />
+                </Link>
                 <a href="#" className="nav-link">
                   PARTNERS
                 </a>
@@ -132,7 +139,7 @@ const StyledWrapper = styled.div`
   }
 
   .nav-link:hover {
-    color: var(--accent-color, #ffff00); /* text-rose-300 */
+    color: var(--accent-color); /* hover:text-rose-300 */
   }
 
   .nav-icon {
@@ -177,7 +184,7 @@ const StyledWrapper = styled.div`
     background-color: black; /* Add this line */
   }
   .border {
-   border: 1px solid var(--accent-color);
+    border: 1px solid var(--accent-color);
     background-color: var(--accent-color);
     margin: 0;
     padding: 0;

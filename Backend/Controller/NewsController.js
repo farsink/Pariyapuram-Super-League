@@ -72,7 +72,7 @@ exports.deleteNews = async (req, res) => {
     const { id } = req.params;
     const news = await News.findByIdAndDelete(id);
     if (!news) {
-      return res.status(404).json({ message: "News not found" });
+      return res.status(408).json({ message: "News not found" });
     }
 
     // Delete the news image from the local folder
