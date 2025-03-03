@@ -33,7 +33,7 @@ import {
 } from "chart.js";
 
 import styled from "styled-components";
-import ProtectedAdminRoute from "../Middlewares/Protected.Jsx";
+import ProtectedAdminRoute from "../Middlewares/Protected";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth, useUser } from "@clerk/clerk-react";
 
