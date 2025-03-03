@@ -25,7 +25,7 @@ const PaymentEmbedded = ({ ticket }) => {
           totalPrice: ticket.totalPrice,
         },
         mode: "payment",
-        return_url: `http://localhost:5173/tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
+        return_url: `${serverurl}/tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
       }),
     })
       .then((res) => res.json())
