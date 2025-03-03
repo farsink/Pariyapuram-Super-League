@@ -307,7 +307,7 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("../src/assets/hhholographic.webp") no-repeat center center;
+    background: url("public/assets/hhholographic.webp") no-repeat center center;
     border-radius: 10px;
     background-size: cover;
     position: relative;

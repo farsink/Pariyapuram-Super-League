@@ -96,7 +96,7 @@ const MatchResult = () => {
             </div>
           </div>
           {/* Score Card Section */}
-          <div className="p-4 md:p-8 mt-4 md:mt-6 mx-2 md:mx-4 rounded-xl bg-[url('../src/assets/background_white.png')] bg-cover shadow-sm shadow-gray-500">
+          <div className="p-4 md:p-8 mt-4 md:mt-6 mx-2 md:mx-4 rounded-xl bg-[url('../public/assets/background_white.png')] bg-cover shadow-sm shadow-gray-500">
             <div className="text-center mb-4">
               <h2 className="text-lg font-semibold text-gray-800">Super League</h2>
               <p className="text-sm text-gray-600">{match?.round.toUpperCase()}</p>

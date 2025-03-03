@@ -30,7 +30,7 @@ function Home() {
       <TeamCarousel />
 
       {/* Main Content */}
-      <div className="bg-[url('../src/assets/background_white.png')] bg-cover bg-center bg-no-repeat">
+      <div className="bg-[url('../public/assets/background_white.png')] bg-cover bg-center bg-no-repeat">
         <div className="bg-accent bg-opacity-5">
           {/* Hero Section */}
           <HeroSection />

@@ -79,7 +79,7 @@ const Footer = () => {
           {/* Logo */}
           <div className='flex justify-center mb-8'>
             <img
-              src='../src/assets/LogoText.png'
+              src='public/assets/LogoText.png'
               alt='psl.com'
               className='h-8'
             />

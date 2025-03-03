@@ -79,7 +79,7 @@ const ProfileModal2 = () => {
         <div
           className="h-32 bg-gradient-to-r from-blue-600 to-blue-400"
           style={{
-            backgroundImage: "url('../src/assets/ScoreCard2.jpg')",
+            backgroundImage: "url('public/assets/ScoreCard2.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",

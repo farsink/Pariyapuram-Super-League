@@ -14,7 +14,7 @@ const MatchCard = ({ match }) => {
       {/* Header Section */}
       <div className="px-6 py-4 border-b flex items-center gap-3">
         <img
-          src="../src/assets/psl-logo1.png"
+          src="public/assets/psl-logo1.png"
           alt="Premier League"
           className="w-6 h-6 sm:w-8 sm:h-8"
         />

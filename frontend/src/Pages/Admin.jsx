@@ -109,7 +109,7 @@ function Admin() {
               <div className='flex items-center space-x-3'>
                 <Link to='/'>
                   <img
-                    src='../src/assets/psl-logo1.png'
+                    src='public/assets/psl-logo1.png'
                     className='w-9 h-8'
                     alt=''
                   />

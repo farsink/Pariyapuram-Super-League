@@ -58,7 +58,7 @@ const TestNavbar = () => {
             {/* Centered Logo */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <Link to="/">
-                <img src="../src/assets/LogoText.png" alt="PSL_logo" className="h-10 w-auto" />
+                <img src="public/assets/LogoText.png" alt="PSL_logo" className="h-10 w-auto" />
               </Link>{" "}
             </div>
 

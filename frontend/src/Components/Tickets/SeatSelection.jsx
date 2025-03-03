@@ -19,7 +19,7 @@ export default function SeatSelection({ match, onTicketCreated }) {
       <div className="flex flex-col items-center justify-center bg-red-100 border border-red-500 rounded p-4">
         <p className="text-red-700 font-bold">Error</p>
         <p className="text-red-600">Please login to continue.</p>
-        <img src="../src/assets/error_login.svg" className="w-1/4 max-h-1/4" alt="" />
+        <img src="public/assets/error_login.svg" className="w-1/4 max-h-1/4" alt="" />
         <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => Navigate("/login")}>
           Login to buy ticket
         </button>

@@ -44,7 +44,7 @@ function Home() {
           <div className="home-content-header d-flex gap-3 mt-3">
             <div className="logo-home">
               <img
-                src="../src/assets/psl-logo1.png"
+                src="public/assets/psl-logo1.png"
                 alt="logo"
                 className="img-fluid"
                 width="50wv"
@@ -105,7 +105,7 @@ const StyledWrapper = styled.div`
     font-family: "Lexend";
     font-weight: bold;
     height: 80vh;
-    background: url("../src/assets/Home.jpg") no-repeat center center fixed;
+    background: url("public/assets/Home.jpg") no-repeat center center fixed;
     background-size: cover;
     display: flex;
     align-items: flex-end;
