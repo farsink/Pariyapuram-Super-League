@@ -16,7 +16,8 @@ function Home() {
   const [activeTab, setActiveTab] = React.useState("Matches");
   const { matches, status } = useSelector((state) => state.matches);
 
-  const defaultGameweek = matches?.find((m) => m.status === "scheduled")?.round || "Not FOund";
+  const defaultGameweek =
+    matches?.find((m) => m.status === "scheduled")?.round || "Not FOund";
 
   useEffect(() => {
     if (defaultGameweek) {
@@ -25,13 +26,13 @@ function Home() {
   }, [defaultGameweek, matches]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className='min-h-screen bg-gray-100'>
       {/* Team Carousel */}
       <TeamCarousel />
 
       {/* Main Content */}
-      <div className="bg-[url('../public/assets/background_white.png')] bg-cover bg-center bg-no-repeat">
-        <div className="bg-accent bg-opacity-5">
+      <div className="bg-[url('/assets/background_white.png')] bg-cover bg-center bg-no-repeat">
+        <div className='bg-accent bg-opacity-5'>
           {/* Hero Section */}
           <HeroSection />
           {/* Match Tabs */}
@@ -39,11 +40,15 @@ function Home() {
           {/* Content area */}
           {activeTab === "Matches" ? (
             <>
-              <GameWeekCarousel activeWeek={activeGameWeek} onWeekChange={setActiveGameWeek} />
-              <div className="max-w-7xl mx-auto px-4 py-8">
+              <GameWeekCarousel
+                activeWeek={activeGameWeek}
+                onWeekChange={setActiveGameWeek}
+              />
+              <div className='max-w-7xl mx-auto px-4 py-8'>
                 <MatchCard
                   match={matches?.filter(
-                    (m) => m.round.toLowerCase() === activeGameWeek.toLowerCase()
+                    (m) =>
+                      m.round.toLowerCase() === activeGameWeek.toLowerCase()
                   )}
                 />
               </div>

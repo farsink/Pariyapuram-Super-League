@@ -19,7 +19,9 @@ function Home() {
   useEffect(() => {
     if (user) {
       // Display a toast notification if the user is logged in
-      toast.success(`Logged in as ${user.username || user.primaryEmailAddress.emailAddress}`);
+      toast.success(
+        `Logged in as ${user.username || user.primaryEmailAddress.emailAddress}`
+      );
     }
   }, [user]);
 
@@ -27,12 +29,14 @@ function Home() {
     <>
       <StyledWrapper>
         {/* Parallax Section */}
-        <div className="parallax-section">
-          <div className="overlay">
+        <div className='parallax-section'>
+          <div className='overlay'>
             <Container>
               <Row>
-                <Col className="text-start text-white">
-                  <h1 className="display-4 fw-bold">Pariyapuram Super League: Season 8 is Here!</h1>
+                <Col className='text-start text-white'>
+                  <h1 className='display-4 fw-bold'>
+                    Pariyapuram Super League: Season 8 is Here!
+                  </h1>
                 </Col>
               </Row>
             </Container>
@@ -40,51 +44,57 @@ function Home() {
         </div>
 
         {/* Scrolling Content */}
-        <Container fluid className="content-section ">
-          <div className="home-content-header d-flex gap-3 mt-3">
-            <div className="logo-home">
+        <Container fluid className='content-section '>
+          <div className='home-content-header d-flex gap-3 mt-3'>
+            <div className='logo-home'>
               <img
-                src="public/assets/psl-logo1.png"
-                alt="logo"
-                className="img-fluid"
-                width="50wv"
-                height="50hv"
+                src='/assets/psl-logo1.png'
+                alt='logo'
+                className='img-fluid'
+                width='50wv'
+                height='50hv'
                 style={{ borderRight: "1px solid white", paddingRight: "10px" }} // Inline styles
               />
             </div>
-            <h2 className="text-white">SEASON 8</h2>
+            <h2 className='text-white'>SEASON 8</h2>
           </div>
           <hr />
-          <div className="tab-section">
-            <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="custom-tabs ">
-              <Tab eventKey="overview" title="Overview">
-                <div className="tab-content-wrapper">
+          <div className='tab-section'>
+            <Tabs
+              activeKey={key}
+              onSelect={(k) => setKey(k)}
+              className='custom-tabs '
+            >
+              <Tab eventKey='overview' title='Overview'>
+                <div className='tab-content-wrapper'>
                   <Overview />
                 </div>
               </Tab>
-              <Tab eventKey="Fixtures" title="Fixtures">
-                <div className="tab-content-wrapper">
+              <Tab eventKey='Fixtures' title='Fixtures'>
+                <div className='tab-content-wrapper'>
                   <Fixture />
                 </div>
               </Tab>
-              <Tab eventKey="results" title="Results">
-                <div className="tab-content-wrapper">
+              <Tab eventKey='results' title='Results'>
+                <div className='tab-content-wrapper'>
                   <Results />
                 </div>
               </Tab>
-              <Tab eventKey="standings" title="Standings">
-                <div className="tab-content-wrapper">
+              <Tab eventKey='standings' title='Standings'>
+                <div className='tab-content-wrapper'>
                   <Standings />
                 </div>
               </Tab>
-              <Tab eventKey="top-players" title="Top Players">
-                <div className="tab-content">Top Players content goes here.</div>
+              <Tab eventKey='top-players' title='Top Players'>
+                <div className='tab-content'>
+                  Top Players content goes here.
+                </div>
               </Tab>
             </Tabs>
           </div>
         </Container>
         <ToastContainer
-          position="top-right"
+          position='top-right'
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
@@ -94,7 +104,7 @@ function Home() {
           draggable
           pauseOnHover
           transition={Slide}
-          theme="dark"
+          theme='dark'
         />
       </StyledWrapper>
     </>
@@ -105,7 +115,7 @@ const StyledWrapper = styled.div`
     font-family: "Lexend";
     font-weight: bold;
     height: 80vh;
-    background: url("public/assets/Home.jpg") no-repeat center center fixed;
+    background: url("/assets/Home.jpg") no-repeat center center fixed;
     background-size: cover;
     display: flex;
     align-items: flex-end;
@@ -118,7 +128,12 @@ const StyledWrapper = styled.div`
   }
   .overlay {
     width: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8),
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    );
   }
 
   /* Scrolling content section */

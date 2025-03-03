@@ -62,7 +62,10 @@ function Auth({ isregister }) {
     } catch (err) {
       // Safely handle the error
       toast.error("ERROR :" + err.message);
-      console.error("Error:", err.message || err.errors?.[0]?.message || "An error occurred");
+      console.error(
+        "Error:",
+        err.message || err.errors?.[0]?.message || "An error occurred"
+      );
     }
   };
 
@@ -85,101 +88,116 @@ function Auth({ isregister }) {
   return (
     <>
       <StyledWrapper>
-        <Container fluid className="login-container">
-          <Row className="login-row">
-            <Col md={6} className="login-form-col">
-              <Container className="d-flex m-0 p-0">
-                <Button onClick={() => Navigate("/")} className="back-button">
+        <Container fluid className='login-container'>
+          <Row className='login-row'>
+            <Col md={6} className='login-form-col'>
+              <Container className='d-flex m-0 p-0'>
+                <Button onClick={() => Navigate("/")} className='back-button'>
                   <ArrowLeftCircle />
                 </Button>
               </Container>
-              <h2 className="login-heading">{isregister ? "Sign Up" : "Log In"}</h2>
+              <h2 className='login-heading'>
+                {isregister ? "Sign Up" : "Log In"}
+              </h2>
               <Form onSubmit={handleSubmit}>
-                <div id="clerk-captcha"></div>
-                <Form.Group controlId="formEmail">
+                <div id='clerk-captcha'></div>
+                <Form.Group controlId='formEmail'>
                   <Form.Control
-                    name="email"
-                    type="email"
-                    placeholder="Your Email"
-                    className="form-input"
-                    autoComplete="email" // Add autocomplete for email
+                    name='email'
+                    type='email'
+                    placeholder='Your Email'
+                    className='form-input'
+                    autoComplete='email' // Add autocomplete for email
                   />
                 </Form.Group>
-                <Form.Group controlId="formPassword">
+                <Form.Group controlId='formPassword'>
                   <Form.Control
-                    name="password"
-                    type="password"
-                    placeholder="Your password"
-                    className="form-input"
-                    autoComplete={isregister ? "new-password" : "current-password"} // Add autocomplete for password
+                    name='password'
+                    type='password'
+                    placeholder='Your password'
+                    className='form-input'
+                    autoComplete={
+                      isregister ? "new-password" : "current-password"
+                    } // Add autocomplete for password
                   />
                 </Form.Group>
-                <Button variant="success" type="submit" className="login-button">
+                <Button
+                  variant='success'
+                  type='submit'
+                  className='login-button'
+                >
                   {isregister ? "Sign Up" : "Log In"}
                 </Button>
-                <Container className="d-flex justify-content-between">
+                <Container className='d-flex justify-content-between'>
                   {!isregister && (
                     <Button
-                      variant="link"
-                      className="forgot-password"
+                      variant='link'
+                      className='forgot-password'
                       onClick={() => Navigate("/resetPassword")}
                     >
                       Forgot your password? Reset Password
                     </Button>
                   )}
-                  <Button className="forgot-password">-</Button>
+                  <Button className='forgot-password'>-</Button>
                   {!isregister ? (
                     <Button
                       onClick={() => Navigate("/register")}
-                      variant="link"
-                      className="forgot-password"
+                      variant='link'
+                      className='forgot-password'
                     >
                       SignUp?
                     </Button>
                   ) : (
                     <Button
                       onClick={() => Navigate("/login")}
-                      variant="link"
-                      className="forgot-password"
+                      variant='link'
+                      className='forgot-password'
                     >
                       login?
                     </Button>
                   )}
                 </Container>
 
-                <div className="or-separator">
+                <div className='or-separator'>
                   <span>Other ways to sign in</span>
                 </div>
                 <Button
-                  variant="outline-light"
-                  className="google-button"
+                  variant='outline-light'
+                  className='google-button'
                   onClick={handleGoogleSignIn}
                 >
                   <FaGoogle />
                   Continue With Google
                 </Button>
                 <Button
-                  variant="outline-light"
-                  className="facebook-button"
+                  variant='outline-light'
+                  className='facebook-button'
                   onClick={handleFacebookSignIn}
                 >
                   <FaFacebookF /> Continue With Facebook
                 </Button>
               </Form>
             </Col>
-            <Col md={6} className="info-col">
-              <div className="info-box">
-                <ul className="info-list">
-                  <li>Take part in fan debate by leaving comments on matches and articles</li>
-                  <li>Sign up is free and makes you part of the PSL community</li>
-                  <li>Unlock analysis about your favourite players and teams</li>
+            <Col md={6} className='info-col'>
+              <div className='info-box'>
+                <ul className='info-list'>
+                  <li>
+                    Take part in fan debate by leaving comments on matches and
+                    articles
+                  </li>
+                  <li>
+                    Sign up is free and makes you part of the PSL community
+                  </li>
+                  <li>
+                    Unlock analysis about your favourite players and teams
+                  </li>
                 </ul>
               </div>
             </Col>
           </Row>
         </Container>
         <ToastContainer
-          position="top-center"
+          position='top-center'
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
@@ -189,7 +207,7 @@ function Auth({ isregister }) {
           draggable
           pauseOnHover
           transition={Slide}
-          theme="dark"
+          theme='dark'
         />
       </StyledWrapper>
     </>
@@ -307,7 +325,7 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("public/assets/hhholographic.webp") no-repeat center center;
+    background: url("/assets/hhholographic.webp") no-repeat center center;
     border-radius: 10px;
     background-size: cover;
     position: relative;

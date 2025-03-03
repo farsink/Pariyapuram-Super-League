@@ -6,9 +6,9 @@ import { useAuth } from "@clerk/clerk-react";
 import { toast, ToastContainer } from "react-toastify";
 
 const InterestItem = ({ icon, text }) => (
-  <div className="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-1.5">
+  <div className='flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-1.5'>
     {icon}
-    <span className="text-sm text-gray-200">{text}</span>
+    <span className='text-sm text-gray-200'>{text}</span>
   </div>
 );
 
@@ -70,16 +70,16 @@ const ProfileModal2 = () => {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-white z-10 p-2 hover:bg-gray-800 rounded-full transition-transform duration-300 hover:rotate-90 active:scale-90"
+          className='absolute top-4 right-4 text-white z-10 p-2 hover:bg-gray-800 rounded-full transition-transform duration-300 hover:rotate-90 active:scale-90'
         >
           <X size={24} />
         </button>
 
         {/* Header Background */}
         <div
-          className="h-32 bg-gradient-to-r from-blue-600 to-blue-400"
+          className='h-32 bg-gradient-to-r from-blue-600 to-blue-400'
           style={{
-            backgroundImage: "url('public/assets/ScoreCard2.jpg')",
+            backgroundImage: "url('/assets/ScoreCard2.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
@@ -87,50 +87,52 @@ const ProfileModal2 = () => {
         />
 
         {/* Profile Content */}
-        <div className="px-6 pb-6 -mt-16">
+        <div className='px-6 pb-6 -mt-16'>
           {/* Profile Image */}
-          <div className="flex justify-center">
+          <div className='flex justify-center'>
             <img
               src={user?.imageUrl}
-              alt="Profile"
-              className="w-24 h-24 rounded-full border-4 border-gray-900 shadow-xl"
+              alt='Profile'
+              className='w-24 h-24 rounded-full border-4 border-gray-900 shadow-xl'
             />
           </div>
 
           {/* Profile Info */}
-          <div className="text-center mt-4">
-            <h2 className="text-2xl font-bold text-white">{user?.fullName}</h2>
-            <p className="text-gray-400 mt-2 text-sm px-4">
+          <div className='text-center mt-4'>
+            <h2 className='text-2xl font-bold text-white'>{user?.fullName}</h2>
+            <p className='text-gray-400 mt-2 text-sm px-4'>
               Passionate about live matches & tracking football stats
             </p>
           </div>
 
           {/* Badges */}
-          <div className="flex justify-center gap-3 mt-4">
-            <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">
+          <div className='flex justify-center gap-3 mt-4'>
+            <span className='bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm'>
               Manchester United
             </span>
-            <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">
+            <span className='bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm'>
               Midfielder
             </span>
           </div>
 
           {/* Achievements */}
-          <div className="mt-8">
-            <h3 className="text-gray-400 font-medium mb-3 text-sm tracking-wider">ACHIEVEMENTS</h3>
-            <div className="flex flex-wrap gap-2">
-              <InterestItem icon="🏆" text="League Champion 2023" />
-              <InterestItem icon="⚽" text="Top Scorer" />
-              <InterestItem icon="👟" text="50+ Matches" />
-              <InterestItem icon="🎯" text="90% Pass Accuracy" />
+          <div className='mt-8'>
+            <h3 className='text-gray-400 font-medium mb-3 text-sm tracking-wider'>
+              ACHIEVEMENTS
+            </h3>
+            <div className='flex flex-wrap gap-2'>
+              <InterestItem icon='🏆' text='League Champion 2023' />
+              <InterestItem icon='⚽' text='Top Scorer' />
+              <InterestItem icon='👟' text='50+ Matches' />
+              <InterestItem icon='🎯' text='90% Pass Accuracy' />
             </div>
           </div>
 
           {/* Logout Button */}
-          <div className="flex justify-end mt-8">
+          <div className='flex justify-end mt-8'>
             <button
               onClick={handleLogout}
-              className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-6 py-2 transition-all duration-300 hover:scale-105 active:scale-95"
+              className='bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-6 py-2 transition-all duration-300 hover:scale-105 active:scale-95'
             >
               Logout
             </button>
@@ -138,7 +140,7 @@ const ProfileModal2 = () => {
         </div>
       </div>
       <ToastContainer
-        position="top-center"
+        position='top-center'
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -147,7 +149,7 @@ const ProfileModal2 = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme='dark'
       />
     </div>
   );

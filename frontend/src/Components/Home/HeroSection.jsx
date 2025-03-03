@@ -4,7 +4,7 @@ const HeroSection = () => {
   return (
     <div className='bg-[#37003c] text-white relative overflow-hidden'>
       <div
-        className="absolute inset-0 bg-[url('public/assets/Home.jpg')] opacity-10"
+        className="absolute inset-0 bg-[url('/assets/Home.jpg')] opacity-10"
         style={{
           backgroundPosition: "center",
           backgroundSize: "cover",
@@ -14,7 +14,7 @@ const HeroSection = () => {
       <div className='max-w-7xl mx-auto px-4 py-8 md:py-12 relative'>
         <div className='flex flex-col md:flex-row items-center gap-6 mb-8'>
           <img
-            src='../public/assets/psl-logo1.png'
+            src='..//assets/psl-logo1.png'
             alt='pariyapuram League Logo'
             className='w-16 h-16 md:w-16 md:h-16'
           />

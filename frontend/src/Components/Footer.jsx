@@ -6,28 +6,28 @@ const socialLinks = [
     id: 1,
     name: "Instagram",
     handle: "@strikers_pariyapuram",
-    icon: <Instagram className="w-8 h-8" />,
+    icon: <Instagram className='w-8 h-8' />,
     url: "https://www.instagram.com/strikers_pariyapuram",
   },
   {
     id: 2,
     name: "Facebook",
     handle: "@Strikers-Club",
-    icon: <Facebook className="w-8 h-8" />,
+    icon: <Facebook className='w-8 h-8' />,
     url: "https://facebook.com/strikers_pariyapuram",
   },
   {
     id: 4,
     name: "Youtube",
     handle: "@strikerspariyapuram",
-    icon: <Youtube className="w-8 h-8" />,
+    icon: <Youtube className='w-8 h-8' />,
     url: "https://www.youtube.com/@STRIKERSPARIYAPURAM",
   },
   {
     id: 5,
     name: "Instagram",
     handle: "@storiesofmillumpadiiii",
-    icon: <Instagram className="w-8 h-8" />, // Using Globe as placeholder since Lucide doesn't have TikTok
+    icon: <Instagram className='w-8 h-8' />, // Using Globe as placeholder since Lucide doesn't have TikTok
     url: "https://www.instagram.com/storiesofmillumpadiiii",
   },
 ];
@@ -78,11 +78,7 @@ const Footer = () => {
         <div className='max-w-7xl mx-auto px-4 py-8'>
           {/* Logo */}
           <div className='flex justify-center mb-8'>
-            <img
-              src='public/assets/LogoText.png'
-              alt='psl.com'
-              className='h-8'
-            />
+            <img src='/assets/LogoText.png' alt='psl.com' className='h-8' />
           </div>
 
           {/* Navigation Links */}

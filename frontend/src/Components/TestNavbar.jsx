@@ -21,68 +21,72 @@ const TestNavbar = () => {
   }, [user]);
 
   return (
-    <StyledWrapper className="font-oswald sticky top-0 z-40">
+    <StyledWrapper className='font-oswald sticky top-0 z-40'>
       <nav
         className={`bg-black text-white ${
           isMenuOpen ? "mobile-menu-open" : ""
         } border-b-4 border-accent`}
       >
-        <div className="max-w-7xl mx-auto px-4">
+        <div className='max-w-7xl mx-auto px-4'>
           {/* Main Navigation Bar */}
-          <div className="flex items-center h-16 relative">
+          <div className='flex items-center h-16 relative'>
             {/* Left Section with Menu and Primary Links */}
-            <div className="flex items-center ">
+            <div className='flex items-center '>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 nav-icon lg:hidden"
-                aria-label="Menu"
+                className='p-2 nav-icon lg:hidden'
+                aria-label='Menu'
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <div className="hidden lg:flex lg:items-center lg:space-x-8 ml-8 z-100">
-                <Link to={"/tickets"} className="nav-link">
+              <div className='hidden lg:flex lg:items-center lg:space-x-8 ml-8 z-100'>
+                <Link to={"/tickets"} className='nav-link'>
                   TICKETS
                 </Link>
-                <Link to={"/gallery"} className="nav-link">
+                <Link to={"/gallery"} className='nav-link'>
                   GALLERY
                 </Link>
-                <Link to={"/videos"} className="nav-link">
+                <Link to={"/videos"} className='nav-link'>
                   VIDEOS
                 </Link>
-                <Link to={"/news"} className="nav-link">
+                <Link to={"/news"} className='nav-link'>
                   NEWS
                 </Link>
               </div>
             </div>
 
             {/* Centered Logo */}
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <Link to="/">
-                <img src="public/assets/LogoText.png" alt="PSL_logo" className="h-10 w-auto" />
+            <div className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+              <Link to='/'>
+                <img
+                  src='/assets/LogoText.png'
+                  alt='PSL_logo'
+                  className='h-10 w-auto'
+                />
               </Link>{" "}
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center ml-auto">
+            <div className='flex items-center ml-auto'>
               {/* Only show Adidas logo and Help icon on larger screens */}
-              <div className="hidden md:block">
+              <div className='hidden md:block'>
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
-                  alt="Adidas"
-                  className="h-6 w-auto"
+                  src='https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg'
+                  alt='Adidas'
+                  className='h-6 w-auto'
                 />
-                <div className="nav-divider mb-4"></div>
+                <div className='nav-divider mb-4'></div>
               </div>
-              <div className="flex space-x-4">
-                <button aria-label="Search" className="p-2 nav-icon">
+              <div className='flex space-x-4'>
+                <button aria-label='Search' className='p-2 nav-icon'>
                   <Search size={20} />
                 </button>
                 <button
                   onClick={() => {
                     user ? openModal() : navigate("/login");
                   }}
-                  aria-label="Account"
-                  className="p-2 nav-icon"
+                  aria-label='Account'
+                  className='p-2 nav-icon'
                 >
                   <User size={20} />
                 </button>
@@ -92,27 +96,42 @@ const TestNavbar = () => {
 
           {/* Dropdown Menu */}
           {isMenuOpen && (
-            <div className="mobile-menu " onClick={() => setIsMenuOpen(false)}>
-              <div className="px-4 py-3 space-y-2">
-                <Link to="/news" className="nav-link flex items-center justify-between">
+            <div className='mobile-menu ' onClick={() => setIsMenuOpen(false)}>
+              <div className='px-4 py-3 space-y-2'>
+                <Link
+                  to='/news'
+                  className='nav-link flex items-center justify-between'
+                >
                   NEWS <ChevronDown size={16} />
                 </Link>
-                <Link to="/gallery" className="nav-link flex items-center justify-between">
+                <Link
+                  to='/gallery'
+                  className='nav-link flex items-center justify-between'
+                >
                   GALLERY <ChevronDown size={16} />
                 </Link>
-                <Link to="/videos" className="nav-link flex items-center justify-between">
+                <Link
+                  to='/videos'
+                  className='nav-link flex items-center justify-between'
+                >
                   VIDEOS <ChevronDown size={16} />
                 </Link>
-                <Link to="/history" className="nav-link flex items-center justify-between">
+                <Link
+                  to='/history'
+                  className='nav-link flex items-center justify-between'
+                >
                   HISTORY <ChevronDown size={16} />
                 </Link>
-                <Link to="/tickets" className="nav-link flex items-center justify-between">
+                <Link
+                  to='/tickets'
+                  className='nav-link flex items-center justify-between'
+                >
                   TICKETS <ChevronDown size={16} />
                 </Link>
-                <a href="#" className="nav-link">
+                <a href='#' className='nav-link'>
                   PARTNERS
                 </a>
-                <a href="#" className="nav-link">
+                <a href='#' className='nav-link'>
                   SEARCH
                 </a>
               </div>
