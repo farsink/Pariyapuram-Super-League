@@ -9,15 +9,14 @@ import NewsSection from "../Components/Home/NewsSection";
 import Standings from "../Components/Home/Standings";
 import TopPlayers from "../Components/Home/TopPlayers";
 import { useSelector } from "react-redux";
-import Results from "../Components/Results";
-import Videos from "./Videos";
+import Videos from "./VideoPage/Videos";
 
 function Home() {
   const [activeGameWeek, setActiveGameWeek] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("Matches");
   const { matches, status } = useSelector((state) => state.matches);
 
-  const defaultGameweek = matches?.find((m) => m.status === "scheduled")?.round|| "Not FOund";
+  const defaultGameweek = matches?.find((m) => m.status === "scheduled")?.round || "Not FOund";
 
   useEffect(() => {
     if (defaultGameweek) {

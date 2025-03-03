@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { ChevronDown, Info } from "lucide-react";
 import { createTicket, getSeatAvailability } from "../../Api/ApiList";
 import { useUserContext } from "../../context/UserContext";
+import { Navigate, useNavigate } from "react-router-dom";
+import { Slide, toast, ToastContainer } from "react-toastify";
 
 export default function SeatSelection({ match, onTicketCreated }) {
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -9,8 +11,21 @@ export default function SeatSelection({ match, onTicketCreated }) {
   const [selectedTier, setSelectedTier] = useState(null);
   const [availability, setAvailability] = useState({ low: 0, premium: 0, VIP: 0 });
   const { user } = useUserContext();
+  const Navigate = useNavigate();
+  if (!user?.id) {
 
-  console.log(user);
+
+    return (
+      <div className="flex flex-col items-center justify-center bg-red-100 border border-red-500 rounded p-4">
+        <p className="text-red-700 font-bold">Error</p>
+        <p className="text-red-600">Please login to continue.</p>
+        <img src="../src/assets/error_login.svg" className="w-1/4 max-h-1/4" alt="" />
+        <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => Navigate("/login")}>
+          Login to buy ticket
+        </button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (match) {
@@ -57,7 +72,7 @@ export default function SeatSelection({ match, onTicketCreated }) {
         alert("Failed to create ticket, please try again.");
       }
     } catch (error) {
-      console.log("Error fetching seat availability:", error);
+      console.error("Error fetching seat availability:", error);
     }
   };
   const sectionColors = {
@@ -83,7 +98,16 @@ export default function SeatSelection({ match, onTicketCreated }) {
                 Clear stadium map filters
               </button>
             </div>
-
+            <ToastContainer
+              position="top-center"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              style={{ '--toast-color': 'red' }}
+              transition={Slide}
+            />
             <div className="relative">
               <svg viewBox="0 0 1200 800" className="w-full">
                 <g transform="translate(100, 50)">

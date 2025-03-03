@@ -97,11 +97,7 @@ function Tickets() {
           <div className="flex flex-col items-end">
             <span className="text-sm font-medium">{matches?.league}</span>
             <span className="text-xs text-gray-600">
-              {new Date(matches?.date).toLocaleDateString("en-IN", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
+              {new Intl.DateTimeFormat('en-GB', {day: 'numeric', month: 'short', year: 'numeric'}).format(new Date())}
             </span>
           </div>
         </div>

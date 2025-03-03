@@ -14,7 +14,7 @@ const NewsSection = () => {
     fetchNews();
   }, []);
 
-  console.log(News);
+
   const formatTimeAgo = (dateString) => {
     const now = new Date();
     const postDate = new Date(dateString);
@@ -44,7 +44,7 @@ const NewsSection = () => {
         {News.length > 0 ? (
           News.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               <img

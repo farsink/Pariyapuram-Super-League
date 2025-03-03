@@ -48,7 +48,7 @@ const Standings = () => {
             <button
               onClick={() => setShowForm(!showForm)}
               className={`w-12 h-6 bg-gray-200 rounded-full relative hover:bg-gray-300 ${
-                showForm && "bg-green-400 hover:bg-[#37003c]"
+                showForm && "bg-Purple  hover:bg-[#37003c]"
               }`}
             >
               <div

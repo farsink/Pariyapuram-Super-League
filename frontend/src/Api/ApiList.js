@@ -126,8 +126,34 @@ export const updateMatch = async (matchId, matchData) => {
 // fetch all news
 
 export const getNews = async () => {
-  const response = await AxiosConfig(`${serverurl}/api/news/all`, "GET", null, null);
+  const response = await AxiosConfig(`${serverurl}/api/news/getall`, "GET", null, null);
 
+  return await response;
+};
+
+
+export const addNews = async (newsData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/news/create`,
+    "POST",
+    { "Content-Type": "application/json" }, // Set the content type to JSON
+    newsData // Send newsData directly as JSON
+  );
+  return response;
+};
+
+export const updateNews = async (newsId, newsData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/news/${newsId}`,
+    "PUT",
+    { "Content-Type": "application/json" }, // Set the content type to JSON
+    newsData // Send newsData directly as JSON
+  );
+  return response;
+};
+
+export const deleteNewsID = async (newsId) => {
+  const response = await AxiosConfig(`${serverurl}/api/news/${newsId}`, "DELETE");
   return await response;
 };
 
@@ -148,7 +174,7 @@ export const getSeatAvailability = async (matchId) => {
 // fetch all tickets
 
 export const getTickets = async () => {
-  const response = await AxiosConfig(`${serverurl}/api/tickets/GetAll`, "GET", null, null);
+  const response = await AxiosConfig(`${serverurl}/api/ticket/GetAll`, "GET", null, null);
 
   return await response;
 };
@@ -171,4 +197,56 @@ export const getTicketByID = async (ticketId) => {
   const response = await AxiosConfig(`${serverurl}/api/ticket/${ticketId}`, "GET", null, null);
 
   return await response;
+};
+//update ticket by id
+
+export const updateTicket = async (ticketId, formData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/ticket/${ticketId}`,
+    "PUT",
+    {}, // Empty headers object
+    formData // Send FormData directly
+  );
+  return response;
+};
+
+
+{"videos"}
+
+// fetch all videos
+
+export const fetchVideos = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/videos/fetch`, "GET", null, null);
+
+  return await response;
+};
+
+// get videos
+
+export const getVideos = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/video/getVideos`, "GET", null, null);
+
+  return await response;
+};
+
+{"gallery"}
+
+// fetch all gallery
+
+export const fetchGallery = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/gallery/getall`, "GET", null, null);
+
+  return await response;
+}
+
+//upload image
+
+export const uploadImage = async (formData) => {
+  const response = await AxiosConfig(
+    `${serverurl}/api/gallery/upload`,
+    "POST",
+    { "Content-Type": "multipart/form-data" }, // Set the content type to multipart
+    formData // Send FormData directly
+  );
+  return response;
 };

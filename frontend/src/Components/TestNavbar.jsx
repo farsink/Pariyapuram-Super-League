@@ -5,12 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import "../App.css";
 import { useUserContext } from "../context/UserContext";
+import { useModal } from "../context/ModalContext";
 
 const TestNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const { user } = useUserContext(); // Get user data from the context
   const navigate = useNavigate();
+  const { openModal } = useModal();
 
   useEffect(() => {
     if (user) {
@@ -19,7 +21,7 @@ const TestNavbar = () => {
   }, [user]);
 
   return (
-    <StyledWrapper className="font-oswald sticky top-0 z-50">
+    <StyledWrapper className="font-oswald sticky top-0 z-40">
       <nav
         className={`bg-black text-white ${
           isMenuOpen ? "mobile-menu-open" : ""
@@ -77,7 +79,7 @@ const TestNavbar = () => {
                 </button>
                 <button
                   onClick={() => {
-                    user ? navigate("/profile") : navigate("/login");
+                    user ? openModal() : navigate("/login");
                   }}
                   aria-label="Account"
                   className="p-2 nav-icon"
@@ -98,8 +100,8 @@ const TestNavbar = () => {
                 <Link to="/gallery" className="nav-link flex items-center justify-between">
                   GALLERY <ChevronDown size={16} />
                 </Link>
-                <Link to="/club" className="nav-link flex items-center justify-between">
-                  TEAMS <ChevronDown size={16} />
+                <Link to="/videos" className="nav-link flex items-center justify-between">
+                  VIDEOS <ChevronDown size={16} />
                 </Link>
                 <Link to="/history" className="nav-link flex items-center justify-between">
                   HISTORY <ChevronDown size={16} />

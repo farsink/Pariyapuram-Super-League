@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/create", newsUpload.single("image"), createNews);
 
 // Get All News
-router.get("/all", getAllNews);
+router.get("/getall", getAllNews);
 
 // Update News (with image upload middleware)
 router.put("/update/:id", newsUpload.single("image"), updateNews);

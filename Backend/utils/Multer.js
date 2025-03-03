@@ -20,6 +20,16 @@ const newsStorage = multer.diskStorage({
   },
 });
 
+// Storage for Gallery images
+const galleryStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/gallery/"); // Folder for Gallery images (ensure this folder exists)
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
 // File filter to allow only images
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png|gif|svg/;
@@ -47,4 +57,10 @@ const newsUpload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
-module.exports = { upload, newsUpload };
+const galleryUpload = multer({
+  storage: galleryStorage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
+
+module.exports = { upload, newsUpload, galleryUpload };

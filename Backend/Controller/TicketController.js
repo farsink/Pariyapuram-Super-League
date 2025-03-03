@@ -88,21 +88,29 @@ exports.getTicketById = async (req, res) => {
   }
 };
 
-exports.UpdateTicket = async (req,res) =>{
-    try {
-      const { ticketId, paymentStatus, paymentId } = req.body;
-      // Update the ticket; this uses the _id from MongoDB
-      const updatedTicket = await Ticket.findByIdAndUpdate(
-        ticketId,
-        { paymentStatus, paymentId },
-        { new: true }
-      );
-      if (!updatedTicket) {
-        return res.status(404).json({ error: "Ticket not found" });
-      }
-      res.json({ ticket : updatedTicket });
-    } catch (error) {
-      console.error("Error updating ticket:", error);
-      res.status(500).json({ error: error.message });
+exports.UpdateTicket = async (req, res) => {
+  try {
+    const { ticketId, paymentStatus, paymentId } = req.body;
+    console.log(req.body);
+    // Update the ticket; this uses the _id from MongoDB
+    const updatedTicket = await Ticket.findByIdAndUpdate(
+      ticketId,
+      { paymentStatus, paymentId },
+      { new: true }
+    );
+    if (!updatedTicket) {
+      return res.status(404).json({ error: "Ticket not found" });
     }
+    console.log(updatedTicket);
+
+    res.json({ ticket: updatedTicket });
+  } catch (error) {
+    console.error("Error updating ticket:", error);
+    console.log(error);
+
+    res.status(500).json({ error: error.message });
+  }
 }
+
+
+

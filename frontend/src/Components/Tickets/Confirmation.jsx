@@ -68,7 +68,7 @@ const ConfirmationElement = ({
   };
   const handleTryAgain = () => {
     // Implement retry payment logic
-    console.log("Retrying payment...");
+
   };
   if (loading) {
     return <SkeletonLoader />;
@@ -200,29 +200,35 @@ function Confirmation() {
     const ticketId = params.get("ticketId");
     const sessionId = params.get("session_id");
 
-    if (sessionId && ticketId) {
-      // Optionally, fetch the session status from your backend
-      axios
-        .get(`${serverurl}/api/payment/session-status?session_id=${sessionId}`)
-        .then((res) => setresponse({ ...res.data, ticket: ticketId }))
-        .catch((err) => console.error(err));
 
-      //update the ticket
-      axios
-        .put(`${serverurl}/api/ticket/update`, {
-          ticketId: ticketId,
-          paymentStatus: response.status,
-          paymentId: sessionId,
-        })
-        .then((res) => {
-          setticket(res.data.ticket);
-          setTimeout(() => setisLoading(false), 2000);
-        })
-        .catch((err) => {
-          console.error(err);
-          setTimeout(() => setisLoading(false), 2000);
-        });
-    }
+      // Optionally, fetch the session status from your backend
+if (sessionId && ticketId) {
+    // Optionally, fetch the session status from your backend
+    axios
+      .get(`${serverurl}/api/payment/session-status?session_id=${sessionId}`)
+      .then((res) => {
+        setresponse({ ...res.data, ticket: ticketId });
+
+        // Update the ticket
+        setTimeout(() => {
+          axios
+            .put(`${serverurl}/api/ticket/update`, {
+              ticketId: ticketId,
+              paymentStatus: res.data.status,
+              paymentId: sessionId,
+            })
+            .then((res) => {
+              setticket(res.data.ticket);
+              setTimeout(() => setisLoading(false), 2000);
+            })
+            .catch((err) => {
+              console.error(err);
+              setTimeout(() => setisLoading(false), 2000);
+            });
+        }, 2000); // Simulate delay for loading animation
+      })
+      .catch((err) => console.error(err));
+  }
   }, [location]);
 
   // Render the confirmation component with the fetched data and loading state as props

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMatches } from "../../Redux/slices/MatchSlice";
 import { fetchTeams } from "../../Redux/slices/TeamSlice";
 import { fetchPlayers } from "../../Redux/slices/PlayerSlice";
+import { fetchTickets } from "../../Redux/slices/TicketSlices";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -20,11 +21,12 @@ const Dashboard = () => {
     error: playersError,
   } = useSelector((state) => state.players);
 
-
+const { tickets } = useSelector((state) => state.tickets);
   useEffect (() => {
     dispatch(fetchMatches());
     dispatch(fetchTeams());
     dispatch(fetchPlayers());
+    dispatch(fetchTickets());
   }, [dispatch]);
 
   // Chart Data (Reuse from Admin.jsx)
@@ -100,6 +102,15 @@ const Dashboard = () => {
     },
   };
 
+  const TicketSold = tickets?.filter((ticket) => ticket.paymentStatus === "paid").length;
+ const revenue = tickets?.reduce((acc, ticket) => {
+    if (ticket.paymentStatus === "paid") {
+      return acc + ticket.totalPrice;
+    }
+    return acc;
+  }, 0);
+
+
   return (
     <div>
       <div className="mb-6">
@@ -115,7 +126,9 @@ const Dashboard = () => {
             <Calendar className="w-5 h-5 text-indigo-600" />
           </div>
           <p className="text-2xl font-semibold">{matches?.length}</p>
-          <p className="text-sm text-gray-400 mt-2">{matches?.filter(match => match.status === "scheduled").length} upcoming</p>
+          <p className="text-sm text-gray-400 mt-2">
+            {matches?.filter((match) => match.status === "scheduled").length} upcoming
+          </p>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-xl">
@@ -141,8 +154,8 @@ const Dashboard = () => {
             <h3 className="text-gray-400">Tickets Sold</h3>
             <Ticket className="w-5 h-5 text-indigo-600" />
           </div>
-          <p className="text-2xl font-semibold">12.8k</p>
-          <p className="text-sm text-gray-400 mt-2">82% capacity</p>
+          <p className="text-2xl font-semibold">{TicketSold}</p>
+          <p className="text-sm text-gray-400 mt-2">{tickets?.length} tickets</p>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-xl">
@@ -150,7 +163,7 @@ const Dashboard = () => {
             <h3 className="text-gray-400">Revenue</h3>
             <DollarSign className="w-5 h-5 text-indigo-600" />
           </div>
-          <p className="text-2xl font-semibold">$1.2M</p>
+          <p className="text-2xl font-semibold">₹{revenue.toLocaleString('en-IN')}</p>
           <p className="text-sm text-gray-400 mt-2">+18% from last month</p>
         </div>
       </div>

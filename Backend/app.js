@@ -15,6 +15,8 @@ const NewsRoutes = require("./Routes/NewsRoute");
 const SeatsRoutes = require("./Routes/SeatRoutes");
 const TicketRoute = require("./Routes/TicketRoute");
 const PaymentRoute = require("./Routes/PaymentRoute");
+const VideoRoutes = require("./Routes/VideoRoute");
+const GalleryRoutes = require("./Routes/GalleryRoute");
 dotenv.config();
 
 const app = express();
@@ -57,6 +59,8 @@ app.use("/api/news", NewsRoutes);
 app.use("/api/seats", SeatsRoutes);
 app.use("/api/payment", PaymentRoute);
 app.use("/api/ticket", TicketRoute);
+app.use("/api/video", VideoRoutes);
+app.use("/api/gallery", GalleryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
