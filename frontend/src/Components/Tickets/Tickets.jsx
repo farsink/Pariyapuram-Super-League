@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import MatchCard from "./MatchCard";
+import MatchCard from "./Matchcard";
 import SeatSelection from "./SeatSelection";
 import { useSelector } from "react-redux";
 import PaymentPage from "./PaymentPage";
