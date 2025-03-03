@@ -5,6 +5,7 @@ import { useUserContext } from "../context/UserContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchGallery, uploadImage } from "../Api/ApiList";
 import { serverurl } from "../Api/ServerURL";
+import Loader from "../Components/Customs/Loader";
 const Gallery = () => {
   const [images, setimages] = useState([]);
   const [showDropFiles, setShowDropFiles] = useState(false);
@@ -20,6 +21,23 @@ const Gallery = () => {
       }
     })();
   }, []);
+
+  if (images.length === 0)
+    return (
+      <div className='w-full max-w-7xl mx-auto'>
+        <div className='bg-[#f9f9f9] text-[#37003C] p-4 shadow-lg shadow-[#37003C]'>
+          <div className='flex items-center justify-between'>
+            <h1 className='text-2xl md:text-3xl'>
+              <span className='font-normal'>Photo</span>{" "}
+              <span className='font-bold'>gallery</span>
+            </h1>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <Loader />
+        </div>
+      </div>
+    );
 
   const handleAddImage = async (files) => {
     setShowDropFiles((prev) => !prev); // Toggle the drop files component
@@ -83,7 +101,7 @@ const Gallery = () => {
                     } // Replace 'default-avatar-url' with a default avatar URL if needed
                     alt={image.uploader}
                     className='w-8 h-8 rounded-full object-cover'
-                    loading="lazy"
+                    loading='lazy'
                   />
                   <span className='text-sm text-white'>{image.uploader}</span>
                 </div>

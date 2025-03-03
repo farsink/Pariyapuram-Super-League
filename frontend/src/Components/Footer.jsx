@@ -44,23 +44,29 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1a1a1a] text-white z-50">
+    <footer className='bg-[#1a1a1a] text-white z-50 relative'>
       {/* Social Media Section */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold mb-8 text-textColor">Follow strikers club pariyapuram</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className='max-w-7xl mx-auto px-4 py-12'>
+        <h2 className='text-2xl font-bold mb-8 text-textColor'>
+          Follow strikers club pariyapuram
+        </h2>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
           {socialLinks.map((social) => (
             <a
               key={social.id}
               href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#2a2a2a] p-6 rounded-lg hover:bg-[#3a3a3a] transition-colors"
+              target='_blank'
+              rel='noopener noreferrer'
+              className='bg-[#2a2a2a] p-6 rounded-lg hover:bg-[#3a3a3a] transition-colors'
             >
-              <div className="flex flex-col items-center text-center">
+              <div className='flex flex-col items-center text-center'>
                 {social.icon}
-                <span className="mt-2 text-base text-gray-400">{social.name}</span>
-                <span className="mt-1 text-xs overflow-hidden whitespace-nowrap overflow-ellipsis">{social.handle}</span>
+                <span className='mt-2 text-base text-gray-400'>
+                  {social.name}
+                </span>
+                <span className='mt-1 text-xs overflow-hidden whitespace-nowrap overflow-ellipsis'>
+                  {social.handle}
+                </span>
               </div>
             </a>
           ))}
@@ -68,20 +74,24 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer */}
-      <div className="bg-black">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className='bg-black'>
+        <div className='max-w-7xl mx-auto px-4 py-8'>
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <img src="../src/assets/LogoText.png" alt="psl.com" className="h-8" />
+          <div className='flex justify-center mb-8'>
+            <img
+              src='../src/assets/LogoText.png'
+              alt='psl.com'
+              className='h-8'
+            />
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex flex-wrap justify-center gap-4 mb-6">
+          <nav className='flex flex-wrap justify-center gap-4 mb-6'>
             {footerLinks.map((link) => (
               <a
                 key={link.id}
                 href={link.url}
-                className="text-sm hover:text-gray-300 transition-colors"
+                className='text-sm hover:text-gray-300 transition-colors'
               >
                 {link.name}
               </a>
@@ -89,17 +99,24 @@ const Footer = () => {
           </nav>
 
           {/* Country Selector */}
-          <div className="flex justify-center items-center gap-2 mb-6">
-            <img src="https://flagcdn.com/w20/in.png" alt="India flag" className="w-5" />
-            <span className="text-sm">India</span>
+          <div className='flex justify-center items-center gap-2 mb-6'>
+            <img
+              src='https://flagcdn.com/w20/in.png'
+              alt='India flag'
+              className='w-5'
+            />
+            <span className='text-sm'>India</span>
           </div>
 
           {/* Copyright */}
-          <div className="text-center text-sm text-gray-400">
-            <p>Copyright © {new Date().getFullYear()} PSL All rights reserved.</p>
-            <p className="mt-2">
-              The information contained in this website may not be published, broadcast, rewritten, or
-              redistributed without the prior written authority of Strikers Club
+          <div className='text-center text-sm text-gray-400'>
+            <p>
+              Copyright © {new Date().getFullYear()} PSL All rights reserved.
+            </p>
+            <p className='mt-2'>
+              The information contained in this website may not be published,
+              broadcast, rewritten, or redistributed without the prior written
+              authority of Strikers Club
             </p>
           </div>
         </div>

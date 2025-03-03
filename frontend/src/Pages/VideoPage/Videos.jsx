@@ -48,18 +48,18 @@ function Video() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredVideos, setFilteredVideos] = useState([]);
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const response = await getVideos();
+  const getvideos = async () => {
+    try {
+      const response = await getVideos();
 
-        setVideos(response.data);
-        setFilteredVideos(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchVideos();
+      setVideos(response.data);
+      setFilteredVideos(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getvideos();
   }, []);
   useEffect(() => {
     const filtered = videos.filter((video) =>
@@ -76,10 +76,15 @@ function Video() {
     setSelectedVideo(null);
   };
 
-  const FetchVideos = async () => {
+  const Reload = async () => {
     try {
       const response = await fetchVideos();
- ad   } catch (error) {
+
+      if (response.status === 200) {
+        getVideos();
+      }
+      
+    } catch (error) {
       console.error(error); // Handle error
     }
   };
@@ -129,7 +134,7 @@ function Video() {
 
                 <button
                   className='flex items-center space-x-2 px-4 py-2 bg-[#37003C] text-white rounded-full hover:bg-[#250029] transition-colors'
-                  onClick={FetchVideos}
+                  onClick={Reload}
                 >
                   <RefreshCcw className='w-4 h-4' />
                   <span className='hidden lg:block md:text-sm'>Refresh</span>

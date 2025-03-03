@@ -216,7 +216,7 @@ export const updateTicket = async (ticketId, formData) => {
 // fetch all videos
 
 export const fetchVideos = async () => {
-  const response = await AxiosConfig(`${serverurl}/api/videos/fetch`, "GET", null, null);
+  const response = await AxiosConfig(`${serverurl}/api/video/fetch`, "GET", null, null);
 
   return await response;
 };

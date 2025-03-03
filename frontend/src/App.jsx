@@ -8,7 +8,7 @@ import Videos from "./Pages/VideoPage/Videos";
 import Verify from "./Components/Verify";
 import { UserProvider } from "./context/UserContext";
 import ForgotPassword from "./Pages/ForgotPassword";
-import Admin from "./Pages/Admin.Jsx";
+import Admin from "./Pages/Admin";
 import FixtureAdmin from "./Components/Admin/FixtureAdmin";
 import Dashboard from "./Components/Admin/Dashboard";
 import PlayersManagement from "./Components/Admin/Players";
