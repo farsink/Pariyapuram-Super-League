@@ -1,0 +1,1 @@
+export const VERCEL_URL = 'https://pariyapuram-super-league-server.vercel.app/';
