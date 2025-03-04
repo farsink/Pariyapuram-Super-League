@@ -316,7 +316,7 @@ function TeamsManagement() {
                     <input
                       type='file'
                       name='logo'
-                      accept='.jpg,.jpeg,.png' // Only allow JPG/JPEG files
+                      accept='.jpg,.jpeg,.png,.svg' // Only allow JPG/JPEG files
                       className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                     />
                   </div>
