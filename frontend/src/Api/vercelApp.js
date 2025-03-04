@@ -1,1 +1,1 @@
-export const VERCEL_URL = 'https://pariyapuram-super-league-server.vercel.app';
+export const VERCEL_URL = 'http://localhost:5173/';

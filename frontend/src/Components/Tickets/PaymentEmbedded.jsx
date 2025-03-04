@@ -1,7 +1,10 @@
 // components/PaymentEmbedded.jsx
 import React, { useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout,
+} from "@stripe/react-stripe-js";
 import { serverurl } from "../../Api/ServerURL";
 import { VERCEL_URL } from "../../Api/vercelApp";
 
@@ -26,7 +29,7 @@ const PaymentEmbedded = ({ ticket }) => {
           totalPrice: ticket.totalPrice,
         },
         mode: "payment",
-        return_url: `${VERCEL_URL}/tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
+        return_url: `${VERCEL_URL}tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
       }),
     })
       .then((res) => res.json())
@@ -36,7 +39,7 @@ const PaymentEmbedded = ({ ticket }) => {
   const options = { fetchClientSecret };
 
   return (
-    <div id="checkout">
+    <div id='checkout'>
       <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
