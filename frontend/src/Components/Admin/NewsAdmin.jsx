@@ -10,6 +10,7 @@ import {
 } from "../../Redux/slices/NewsSlice";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
+import { updateNews } from "../../Api/ApiList";
 
 const NewsContainer = styled.div`
   .news-form {
@@ -30,6 +31,12 @@ const NewsAdmin = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
   const [selectedNews, setSelectedNews] = useState(null);
+  const [formState, setFormState] = useState({
+    title: "",
+    description: "",
+    image: "",
+    category: "",
+  });
 
   const dispatch = useDispatch();
   const { news, status, error } = useSelector((state) => state.news);
@@ -37,27 +44,45 @@ const NewsAdmin = () => {
   useEffect(() => {
     dispatch(fetchNews());
   }, [dispatch]);
+  console.log(news);
+  useEffect(() => {
+    if (editingNews) {
+      setFormState({
+        title: editingNews.title,
+        description: editingNews.description,
+        image: editingNews.image,
+        category: editingNews.category,
+      });
+    } else {
+      setFormState({
+        title: "",
+        description: "",
+        image: "",
+        category: "",
+      });
+    }
+  }, [editingNews]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
 
-    const newsData = {
-      title: formData.get("title"),
-      description: formData.get("description"),
-      image: formData.get("image"),
-      category: formData.get("category"),
-    };
-
+    const formData = new FormData();
+    formData.append("title", formState.title);
+    formData.append("description", formState.description);
+    formData.append("image", formState.image);
+    formData.append("category", formState.category);
     try {
       let response;
       if (editingNews) {
-        response = await dispatch(
-          updateNewsAsync({ id: editingNews._id, newsData })
-        );
+        for (let key of formData.keys()) {
+          console.log(key, formData.get(key));
+        }
+
+        response = await updateNews(editingNews._id, formData);
+        console.log(response);
         toast.success("News updated");
       } else {
-        response = await dispatch(addNewsAsync(newsData));
+        response = await dispatch(addNewsAsync(formData));
         toast.success("News added");
       }
     } catch (error) {
@@ -152,7 +177,10 @@ const NewsAdmin = () => {
                 </label>
                 <input
                   name='title'
-                  defaultValue={editingNews?.title}
+                  value={formState.title}
+                  onChange={(e) =>
+                    setFormState({ ...formState, title: e.target.value })
+                  }
                   className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                   required
                 />
@@ -163,7 +191,10 @@ const NewsAdmin = () => {
                 </label>
                 <input
                   name='category'
-                  defaultValue={editingNews?.category}
+                  value={formState.category}
+                  onChange={(e) =>
+                    setFormState({ ...formState, category: e.target.value })
+                  }
                   className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                   required
                 />
@@ -175,20 +206,27 @@ const NewsAdmin = () => {
               </label>
               <textarea
                 name='description'
-                defaultValue={editingNews?.description}
+                value={formState.description}
+                onChange={(e) =>
+                  setFormState({ ...formState, description: e.target.value })
+                }
                 className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                 required
               />
             </div>
             <div>
               <label className='block text-sm text-gray-300 mb-2'>
-                Image URL
+                Image file
               </label>
               <input
                 name='image'
-                defaultValue={editingNews?.image}
+                onChange={(e) =>
+                  setFormState({ ...formState, image: e.target.files[0] })
+                }
+                type='file'
+                accept='.png,.jpg,.jpeg'
                 className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
-                required
+                
               />
             </div>
             <div className='flex justify-end gap-3 mt-6'>
@@ -221,7 +259,8 @@ const NewsAdmin = () => {
               className='news-card p-6 cursor-pointer'
               onClick={() => {
                 setSelectedNews(newsItem);
-                setShowForm(false);
+                setEditingNews(newsItem);
+                setShowForm(true);
               }}
             >
               <div className='flex items-center space-x-4 mb-4'>
@@ -243,12 +282,12 @@ const NewsAdmin = () => {
               <div className='flex justify-end gap-3 mt-4'>
                 <button
                   onClick={() => {
+                    setShowForm(!showForm);
                     setEditingNews(newsItem);
-                    setShowForm(true);
                   }}
                   className='text-indigo-400 hover:text-indigo-300'
                 >
-                  <Edit size={18} />
+                  <Edit size={20} />
                 </button>
                 <button
                   onClick={() => handleDelete(newsItem._id)}

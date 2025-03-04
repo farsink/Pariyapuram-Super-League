@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
 // news storage
 const newsStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/news/"); // Folder for News images
+    cb(null, "/tmp"); // Folder for News images
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`); // Unique filename

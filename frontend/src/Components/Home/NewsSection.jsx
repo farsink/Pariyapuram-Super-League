@@ -48,7 +48,7 @@ const NewsSection = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               <img
-                src={`${serverurl}/news/${item.image}`}
+                src={item.image}
                 alt={item.title}
                 className="w-full h-48 object-cover"
               />

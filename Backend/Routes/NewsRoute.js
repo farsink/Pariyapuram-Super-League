@@ -11,7 +11,7 @@ router.post("/create", newsUpload.single("image"), createNews);
 router.get("/getall", getAllNews);
 
 // Update News (with image upload middleware)
-router.put("/update/:id", newsUpload.single("image"), updateNews);
+router.put("/:id", newsUpload.single("image"), updateNews);
 
 // Delete News
 router.delete("/:id", deleteNews);

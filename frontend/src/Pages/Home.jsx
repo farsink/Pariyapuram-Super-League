@@ -57,7 +57,7 @@ function Home() {
             <Standings />
           ) : activeTab === "Top Players" ? (
             <TopPlayers />
-          ) : activeTab === "Overview" ? (
+          ) : activeTab === "Highlights" ? (
             <Videos />
           ) : null}{" "}
         </div>

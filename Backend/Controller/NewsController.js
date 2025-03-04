@@ -1,29 +1,82 @@
+// Backend/Controller/NewsController.js
 const News = require("../Models/News");
 const fs = require("fs");
-const path = require("path");
+const cloudinary = require("../utils/Cloudinary");
 
-// Helper function to process news data
-const processNewsData = async (req) => {
-  const { title, description, category } = req.body;
-
-  return {
-    title,
-    description,
-    image: req.file ? req.file.filename : null, // Save the file path if an image is uploaded
-    category,
-  };
-};
-
-// Create News
+//create news 
 exports.createNews = async (req, res) => {
   try {
-    const newsData = await processNewsData(req);
+    const { title, description, category } = req.body;
+    let imageUrl = null;
+
+    // If an image file is provided, upload to Cloudinary
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "news_images",
+      });
+      imageUrl = result.secure_url;
+
+      // Remove the temporary file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Error deleting temporary file:", err);
+      });
+    }
+
+    const newsData = { title, description, category, image: imageUrl };
     const news = await News.create(newsData);
     res.status(201).json({ message: "News created successfully", news });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+//
+// Update News
+exports.updateNews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, category } = req.body;
+    const updateData = {};
+
+    // Update basic fields if provided
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+    if (category) updateData.category = category;
+
+    // Fetch the existing news record
+    const existingNews = await News.findById(id);
+    if (!existingNews) {
+      return res.status(404).json({ message: "News not found" });
+    }
+
+    // If a new image file is provided, upload it to Cloudinary
+    if (req.file) {
+      console.log("File received:", req.file);
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "news_images",
+      });
+      updateData.image = result.secure_url;
+      console.log("Image uploaded to Cloudinary:", result.secure_url);
+
+      // Remove the temporary file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Error deleting temporary file:", err);
+      });
+    } else {
+      // Retain the existing image if no new file is provided
+      updateData.image = existingNews.image;
+    }
+
+    const updatedNews = await News.findByIdAndUpdate(id, updateData, { new: true });
+    console.log("Updated news:", updatedNews);
+    res.status(200).json(updatedNews);
+  } catch (error) {
+    console.error("Error updating news:", error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
 
 // Get All News
 exports.getAllNews = async (req, res) => {
@@ -35,36 +88,7 @@ exports.getAllNews = async (req, res) => {
   }
 };
 
-// Update News
-exports.updateNews = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const newsData = await processNewsData(req);
 
-    const existingNews = await News.findById(id);
-    if (!existingNews) {
-      return res.status(404).json({ message: "News not found" });
-    }
-
-    // If no new image is uploaded, retain the existing image
-    if (!req.file) {
-      newsData.image = existingNews.image;
-    } else {
-      // If a new image is uploaded, delete the old image file
-      if (existingNews.image) {
-        const oldImagePath = path.join(__dirname, "../uploads/news", existingNews.image);
-        fs.unlink(oldImagePath, (err) => {
-          if (err) console.error("Failed to delete old image:", err);
-        });
-      }
-    }
-
-    const updatedNews = await News.findByIdAndUpdate(id, newsData, { new: true });
-    res.status(200).json(updatedNews);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
 
 // Delete News
 exports.deleteNews = async (req, res) => {
@@ -76,12 +100,7 @@ exports.deleteNews = async (req, res) => {
     }
 
     // Delete the news image from the local folder
-    if (news.image) {
-      const imagePath = path.join(__dirname, "../uploads/news", news.image);
-      fs.unlink(imagePath, (err) => {
-        if (err) console.error("Failed to delete image:", err);
-      });
-    }
+
 
     res.status(200).json({ message: "News deleted successfully" });
   } catch (error) {

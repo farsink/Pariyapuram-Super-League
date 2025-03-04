@@ -136,7 +136,7 @@ export const addNews = async (newsData) => {
   const response = await AxiosConfig(
     `${serverurl}/api/news/create`,
     "POST",
-    { "Content-Type": "application/json" }, // Set the content type to JSON
+    { }, // Set the content type to JSON
     newsData // Send newsData directly as JSON
   );
   return response;
@@ -146,7 +146,7 @@ export const updateNews = async (newsId, newsData) => {
   const response = await AxiosConfig(
     `${serverurl}/api/news/${newsId}`,
     "PUT",
-    { "Content-Type": "application/json" }, // Set the content type to JSON
+    { }, // Set the content type to JSON
     newsData // Send newsData directly as JSON
   );
   return response;

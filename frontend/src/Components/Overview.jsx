@@ -75,7 +75,7 @@ function Overview() {
             <Card className='custom-card mb-4'>
               <Card.Img
                 variant='top'
-                src={`${serverurl}/news/${News[0]?.image}`}
+                src={News[0]?.image}
                 alt='Premier League'
               />
               <Card.Body>
@@ -93,7 +93,7 @@ function Overview() {
                 <Card.Body className='d-flex align-items-center'>
                   <Card.Img
                     variant='top'
-                    src={`${serverurl}/news/${card.image}`}
+                    src={card.image}
                     alt={card.title}
                     className='me-3'
                     style={{
