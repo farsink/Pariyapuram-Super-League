@@ -2,3 +2,8 @@
   base    = "frontend"       # This is your package directory
   command = "npm run build"  # Your build command
   publish = "dist"           # Your output directory from Vite
+  
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
