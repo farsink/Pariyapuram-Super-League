@@ -443,7 +443,7 @@ function MatchesManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center">
                     <img
-                      src={`${serverurl}/uploads/${editingMatch.homeTeam.logo}`}
+                      src={editingMatch.homeTeam.logo}
                       alt={editingMatch.homeTeam.name}
                       className="w-8 h-8 mr-2 rounded-full"
                     />
@@ -472,7 +472,7 @@ function MatchesManagement() {
                       />
                     </div>
                     <img
-                      src={`${serverurl}/uploads/${editingMatch.awayTeam.logo}`}
+                      src={editingMatch.awayTeam.logo}
                       alt={editingMatch.awayTeam.name}
                       className="w-8 h-8 ml-2 rounded-full"
                     />

@@ -36,7 +36,7 @@ const StatCard = ({ title, players, icon, color }) => {
           <div key={index} className="flex items-center gap-3 mb-4">
             {/* Player Image */}
             <img
-              src={`${serverurl}/uploads/${player.team?.logo}` || "https://via.placeholder.com/50"} // Fallback image if no image is provided
+              src={player.team?.logo || "https://via.placeholder.com/50"} // Fallback image if no image is provided
               alt={player.name}
               className="w-10 h-10 rounded-full object-cover"
             />

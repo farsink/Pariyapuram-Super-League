@@ -120,7 +120,7 @@ const MatchResult = () => {
               {/* Team 1 */}
               <div className='flex flex-col items-center'>
                 <img
-                  src={`${serverurl}/uploads/${match?.homeTeam?.logo}`}
+                  src={match?.homeTeam?.logo}
                   alt={match?.homeTeam?.name}
                   className='w-12 h-12 md:w-16 md:h-16 mb-1'
                 />
@@ -159,7 +159,7 @@ const MatchResult = () => {
               {/* Team 2 */}
               <div className='flex flex-col items-center'>
                 <img
-                  src={`${serverurl}/uploads/${match?.awayTeam?.logo}`}
+                  src={match?.awayTeam?.logo}
                   alt={match?.awayTeam?.name}
                   className='w-12 h-12 md:w-16 md:h-16 mb-1'
                 />

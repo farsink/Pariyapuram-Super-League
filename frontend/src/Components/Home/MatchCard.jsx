@@ -39,7 +39,7 @@ const MatchCard = ({ match }) => {
               {/* Home Team */}
               <div className='flex items-center gap-2 sm:gap-4 flex-1'>
                 <img
-                  src={`${serverurl}/uploads/${game.homeTeam.logo}`}
+                  src={game.homeTeam.logo}
                   alt={game.homeTeam.name}
                   className='w-6 h-6 sm:w-8 sm:h-8'
                 />
@@ -98,7 +98,7 @@ const MatchCard = ({ match }) => {
                   </span>
                 </div>
                 <img
-                  src={`${serverurl}/uploads/${game.awayTeam.logo}`}
+                  src={game.awayTeam.logo}
                   alt={game.awayTeam.name}
                   className='w-6 h-6 sm:w-8 sm:h-8'
                 />

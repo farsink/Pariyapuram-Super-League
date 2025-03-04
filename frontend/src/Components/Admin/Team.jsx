@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, Users, Trophy, BarChart, X, FolderMinus } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Users,
+  Trophy,
+  BarChart,
+  X,
+  FolderMinus,
+} from "lucide-react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
@@ -87,7 +96,6 @@ function TeamsManagement() {
   const dispatch = useDispatch();
   const { teams, status, error } = useSelector((state) => state.teams);
 
-
   // Fetch teams on component mount
   useEffect(() => {
     dispatch(fetchTeams());
@@ -105,7 +113,12 @@ function TeamsManagement() {
 
     // Validate file type and size
     if (logoFile && logoFile.size > 0) {
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/svg+xml",
+      ];
       const maxSize = 9 * 1024 * 1024; // 9MB in bytes
 
       if (!allowedTypes.includes(logoFile.type)) {
@@ -145,7 +158,9 @@ function TeamsManagement() {
       if (editingTeam) {
         // Update existing team
 
-        response = await dispatch(updateTeamAsync({ id: editingTeam._id, formData: apiFormData }));
+        response = await dispatch(
+          updateTeamAsync({ id: editingTeam._id, formData: apiFormData })
+        );
         toast.success("Team updated");
       } else {
         // Add new team
@@ -238,7 +253,7 @@ function TeamsManagement() {
   if (status === "error") {
     return (
       <TeamsContainer>
-        <p className="text-red-500">An error occurred: {error}</p>
+        <p className='text-red-500'>An error occurred: {error}</p>
       </TeamsContainer>
     );
   }
@@ -246,7 +261,7 @@ function TeamsManagement() {
   return (
     <TeamsContainer>
       <ToastContainer
-        position="top-center"
+        position='top-center'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -256,16 +271,16 @@ function TeamsManagement() {
         draggable
         pauseOnHover
         transition={Slide}
-        theme="dark"
+        theme='dark'
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className='flex justify-between items-center mb-6'>
         <div>
-          <h1 className="text-2xl font-bold text-white">Teams Management</h1>
-          <p className="text-gray-400">Manage tournament teams and details</p>
+          <h1 className='text-2xl font-bold text-white'>Teams Management</h1>
+          <p className='text-gray-400'>Manage tournament teams and details</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2"
+          className='bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2'
         >
           <Plus size={18} />
           Add New Team
@@ -273,155 +288,163 @@ function TeamsManagement() {
       </div>
 
       {status === "loading" ? (
-        <p className="text-white">Loading...</p>
+        <p className='text-white'>Loading...</p>
       ) : (
         <>
           {showForm && (
-            <div className="team-form p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4 text-white">
+            <div className='team-form p-6 mb-8'>
+              <h2 className='text-xl font-semibold mb-4 text-white'>
                 {editingTeam ? "Edit Team" : "New Team"}
               </h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className='space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">Team Name</label>
+                    <label className='block text-sm text-gray-300 mb-2'>
+                      Team Name
+                    </label>
                     <input
-                      name="name"
+                      name='name'
                       defaultValue={editingTeam?.name}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className='block text-sm text-gray-300 mb-2'>
                       Team Logo (JPG only, max 9MB)
                     </label>
                     <input
-                      type="file"
-                      name="logo"
-                      accept=".jpg,.jpeg,.png" // Only allow JPG/JPEG files
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      type='file'
+                      name='logo'
+                      accept='.jpg,.jpeg,.png' // Only allow JPG/JPEG files
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">Current Position</label>
+                    <label className='block text-sm text-gray-300 mb-2'>
+                      Current Position
+                    </label>
                     <input
-                      type="number"
-                      name="currentPosition"
+                      type='number'
+                      name='currentPosition'
                       defaultValue={editingTeam?.currentPosition}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">Current Points</label>
+                    <label className='block text-sm text-gray-300 mb-2'>
+                      Current Points
+                    </label>
                     <input
-                      type="number"
-                      name="currentPoints"
+                      type='number'
+                      name='currentPoints'
                       defaultValue={editingTeam?.currentPoints}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className='block text-sm text-gray-300 mb-2'>
                       Players (comma-separated)
                     </label>
                     <input
-                      name="players"
-                      defaultValue={editingTeam?.players.map((player) => player.name).join(",")}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                      name='players'
+                      defaultValue={editingTeam?.players
+                        .map((player) => player.name)
+                        .join(",")}
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className='block text-sm text-gray-300 mb-2'>
                       Managers (comma-separated)
                     </label>
                     <input
-                      name="manager"
+                      name='manager'
                       defaultValue={editingTeam?.manager?.join(", ")}
-                      className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
-                      placeholder="John Doe, Jane Smith"
+                      className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
+                      placeholder='John Doe, Jane Smith'
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className='block text-sm text-gray-300 mb-2'>
                       Stats (Wins, Draws, Losses)
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className='grid grid-cols-3 gap-2'>
                       <input
-                        type="number"
-                        name="wins"
+                        type='number'
+                        name='wins'
                         defaultValue={editingTeam?.stats.wins}
-                        placeholder="Wins"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Wins'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                       <input
-                        type="number"
-                        name="draws"
+                        type='number'
+                        name='draws'
                         defaultValue={editingTeam?.stats.draws}
-                        placeholder="Draws"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Draws'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                       <input
-                        type="number"
-                        name="losses"
+                        type='number'
+                        name='losses'
                         defaultValue={editingTeam?.stats.losses}
-                        placeholder="Losses"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Losses'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className='block text-sm text-gray-300 mb-2'>
                       Matches Played,GoalScored,GoalConceded
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className='grid grid-cols-3 gap-2'>
                       <input
-                        type="number"
-                        name="matchesPlayed"
+                        type='number'
+                        name='matchesPlayed'
                         defaultValue={editingTeam?.stats.matchesPlayed}
-                        placeholder="Matches Played"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Matches Played'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                       <input
-                        type="number"
-                        name="goalsScored"
+                        type='number'
+                        name='goalsScored'
                         defaultValue={editingTeam?.stats.goalsScored}
-                        placeholder="Goal Scored"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Goal Scored'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                       <input
-                        type="number"
-                        name="goalsConceded"
+                        type='number'
+                        name='goalsConceded'
                         defaultValue={editingTeam?.stats.goalsConceded}
-                        placeholder="Goal Conceded"
-                        className="w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600"
+                        placeholder='Goal Conceded'
+                        className='w-full bg-gray-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600'
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 mt-6">
+                <div className='flex justify-end gap-3 mt-6'>
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => {
                       setShowForm(false);
                       setEditingTeam(null);
                     }}
-                    className="px-4 py-2 text-gray-300 hover:text-white"
+                    className='px-4 py-2 text-gray-300 hover:text-white'
                   >
                     Cancel
                   </button>
                   <button
-                    type="submit"
-                    className="bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg"
+                    type='submit'
+                    className='bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg'
                   >
                     {editingTeam ? "Update" : "Create"} Team
                   </button>
@@ -430,34 +453,38 @@ function TeamsManagement() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {teams &&
               teams.map((team) => (
                 <div
                   key={team._id}
-                  className="team-card p-6 cursor-pointer"
+                  className='team-card p-6 cursor-pointer'
                   onClick={() => {
                     setSelectedTeam(team);
                     setShowForm(false);
                   }}
                 >
-                  <div className="flex items-center space-x-4 mb-4">
+                  <div className='flex items-center space-x-4 mb-4'>
                     <img
-                      src={`${serverurl}/uploads/${team.logo}`}
+                      src={team.logo}
                       alt={team.name}
-                      className="w-16 h-16 rounded-full"
+                      className='w-16 h-16 rounded-full'
                     />
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{team.name}</h3>
-                      <p className="text-sm text-gray-400">Position: {team.currentPosition}</p>
+                      <h3 className='text-lg font-semibold text-white'>
+                        {team.name}
+                      </h3>
+                      <p className='text-sm text-gray-400'>
+                        Position: {team.currentPosition}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-400">
-                    <div className="flex items-center gap-2">
+                  <div className='flex items-center justify-between text-sm text-gray-400'>
+                    <div className='flex items-center gap-2'>
                       <Trophy size={16} />
                       <span>{team.currentPoints} Points</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className='flex items-center gap-2'>
                       <Users size={16} />
                       <span>{team.players.length} Players</span>
                     </div>
@@ -467,7 +494,7 @@ function TeamsManagement() {
             {!teams && (
               <div>
                 {" "}
-                <p className="text-red-500">An error occurred</p>
+                <p className='text-red-500'>An error occurred</p>
               </div>
             )}
           </div>
@@ -481,103 +508,120 @@ function TeamsManagement() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+            className='fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay'
             onClick={() => setSelectedTeam(null)}
           >
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
-              className="modal-content p-6 w-full max-w-2xl"
+              className='modal-content p-6 w-full max-w-2xl'
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">{selectedTeam.name}</h2>
+              <div className='flex justify-between items-center mb-6'>
+                <h2 className='text-2xl font-bold text-white'>
+                  {selectedTeam.name}
+                </h2>
                 <button
                   onClick={() => setSelectedTeam(null)}
-                  className="text-gray-400 hover:text-white"
+                  className='text-gray-400 hover:text-white'
                 >
                   <X size={24} />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   <img
-                    src={`${serverurl}/uploads/${selectedTeam.logo}`}
+                    src={selectedTeam.logo}
                     alt={selectedTeam.name}
-                    className="w-32 h-32 rounded-full mx-auto mb-4"
+                    className='w-32 h-32 rounded-full mx-auto mb-4'
                   />
-                  <div className="text-center">
-                    <p className="text-lg font-semibold text-white">
+                  <div className='text-center'>
+                    <p className='text-lg font-semibold text-white'>
                       Position: {selectedTeam.currentPosition}
                     </p>
-                    <p className="text-sm text-gray-400">Points: {selectedTeam.currentPoints}</p>
+                    <p className='text-sm text-gray-400'>
+                      Points: {selectedTeam.currentPoints}
+                    </p>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Managers</h3>
-                  <ul className="list-none list-inside">
+                  <h3 className='text-xl font-semibold text-white mb-2'>
+                    Managers
+                  </h3>
+                  <ul className='list-none list-inside'>
                     {selectedTeam.manager?.map((manager, index) => (
-                      <li key={index} className="text-gray-400 ">
+                      <li key={index} className='text-gray-400 '>
                         {manager}
                       </li>
                     ))}
                   </ul>
-                  <h3 className="text-xl font-semibold text-white mb-4">Players</h3>
-                  <div className="overflow-y-auto" style={{ height: "calc(100vh - 500px)" }}>
-                    <ul className="space-y-2">
+                  <h3 className='text-xl font-semibold text-white mb-4'>
+                    Players
+                  </h3>
+                  <div
+                    className='overflow-y-auto'
+                    style={{ height: "calc(100vh - 500px)" }}
+                  >
+                    <ul className='space-y-2'>
                       {selectedTeam.players.map((player, index) => (
-                        <li key={index} className="text-gray-400">
+                        <li key={index} className='text-gray-400'>
                           {player.name}
                         </li>
                       ))}
 
                       {selectedTeam.players.slice(4).map((player, index) => (
-                        <li key={index} className="text-gray-400">
+                        <li key={index} className='text-gray-400'>
                           {player.name}
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
-                <div className="mt-4"></div>
+                <div className='mt-4'></div>
               </div>
 
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Stats</h3>
-                <div className="grid grid-cols-3 gap-4 text-center">
+              <div className='mt-6'>
+                <h3 className='text-xl font-semibold text-white mb-4'>Stats</h3>
+                <div className='grid grid-cols-3 gap-4 text-center'>
                   <div>
-                    <p className="text-lg font-semibold text-white">{selectedTeam.stats.wins}</p>
-                    <p className="text-sm text-gray-400">Wins</p>
+                    <p className='text-lg font-semibold text-white'>
+                      {selectedTeam.stats.wins}
+                    </p>
+                    <p className='text-sm text-gray-400'>Wins</p>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-white">{selectedTeam.stats.draws}</p>
-                    <p className="text-sm text-gray-400">Draws</p>
+                    <p className='text-lg font-semibold text-white'>
+                      {selectedTeam.stats.draws}
+                    </p>
+                    <p className='text-sm text-gray-400'>Draws</p>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-white">{selectedTeam.stats.losses}</p>
-                    <p className="text-sm text-gray-400">Losses</p>
+                    <p className='text-lg font-semibold text-white'>
+                      {selectedTeam.stats.losses}
+                    </p>
+                    <p className='text-sm text-gray-400'>Losses</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 mt-6">
+              <div className='flex justify-end gap-3 mt-6'>
                 <button
                   onClick={() => {
                     setEditingTeam(selectedTeam);
                     setShowForm(true);
                     setSelectedTeam(null);
                   }}
-                  className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2"
+                  className='bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2'
                 >
                   <Edit size={18} />
                   Edit Team
                 </button>
                 <button
                   onClick={() => handleDelete(selectedTeam._id)}
-                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center gap-2"
+                  className='bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center gap-2'
                 >
                   <Trash2 size={18} />
                   Delete Team
