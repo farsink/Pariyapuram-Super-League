@@ -1,1 +1,0 @@
-export const VERCEL_URL = 'http://localhost:5173/';

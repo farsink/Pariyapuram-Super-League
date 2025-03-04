@@ -6,7 +6,7 @@ import {
   EmbeddedCheckout,
 } from "@stripe/react-stripe-js";
 import { serverurl } from "../../Api/ServerURL";
-import { VERCEL_URL } from "../../Api/vercelApp";
+import { NETLIFY_URL, VERCEL_URL } from "../../Api/Redirects";
 
 // Load Stripe using your publishable key (safe on the client)
 const stripePromise = loadStripe(
@@ -29,7 +29,7 @@ const PaymentEmbedded = ({ ticket }) => {
           totalPrice: ticket.totalPrice,
         },
         mode: "payment",
-        return_url: `${VERCEL_URL}tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
+        return_url: `${NETLIFY_URL}tickets/confirmation?session_id={CHECKOUT_SESSION_ID}&ticketId=${ticket._id}`,
       }),
     })
       .then((res) => res.json())
