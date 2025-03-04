@@ -8,16 +8,15 @@ exports.uploadImage = async (req, res) => {
     try {
         file = req.file;
         if (!file) return res.status(400).json({ message: "No file uploaded" });
-        const { user } = req.body; // Ensure the user is authenticated
+        const { user } = req.body;
         // Upload file to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
             folder: "PSL_gallery",
         });
 
-        // Save image metadata in the database
         const newImage = new Gallery({
             url: result.secure_url,
-            uploader: user, // Ensure the user is authenticated
+            uploader: user,
         });
         // Delete temp file after upload
         fs.unlink(file.path, (err) => {

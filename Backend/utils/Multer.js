@@ -23,7 +23,7 @@ const newsStorage = multer.diskStorage({
 // Storage for Gallery images
 const galleryStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/gallery/"); // Folder for Gallery images (ensure this folder exists)
+    cb(null, "/tmp"); // Folder for Gallery images (ensure this folder exists)
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
