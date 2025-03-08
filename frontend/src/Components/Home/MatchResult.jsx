@@ -4,6 +4,7 @@ import MatchLineup from "./MatchLineup";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { serverurl } from "../../Api/ServerURL";
+import Maintanance from "../Customs/Maintanance";
 
 const MatchResult = () => {
   const [activeTab, setActiveTab] = useState("live");
@@ -25,12 +26,13 @@ const MatchResult = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "line-ups":
-        return <MatchLineup />;
+        return <MatchLineup match={match} />;
       default:
         return (
-          <div className='p-4 text-center text-gray-500'>
-            Content for {activeTab} tab
-          </div>
+          <Maintanance
+            SubHeading={"This section is under Constructions"}
+            Image={`/public/assets/Under_Constructions.svg`}
+          />
         );
     }
   };

@@ -63,7 +63,7 @@ function Verify({ isReset }) {
   return (
     <Container
       fluid
-      style={{ backgroundImage: "url(../src/assets/ticket-gradient.png)", height: "100dvh" }}
+      style={{ backgroundImage: "url('/assets/ticket_gradiant.svg')", height: "100dvh",backgroundSize: "cover" }}
     >
       <ToastContainer
         position="top-center"

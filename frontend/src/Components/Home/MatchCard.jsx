@@ -32,7 +32,7 @@ const MatchCard = ({ match }) => {
         {match?.map((game) => (
           <div
             key={game._id}
-            className='px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer'
+            className='px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer '
             onClick={() => navigate(`/match/${game._id}`)}
           >
             <div className='flex items-center justify-between'>
@@ -43,14 +43,16 @@ const MatchCard = ({ match }) => {
                   alt={game.homeTeam.name}
                   className='w-6 h-6 sm:w-8 sm:h-8'
                 />
-                <div className='relative overflow-hidden whitespace-nowrap max-w-[100px] sm:max-w-[150px]'>
+                <div className='relative overflow-hidden whitespace-nowrap max-w-[100px] sm:max-w-[150px] sm:w-[200px]'>
                   <span
-                    className='font-medium text-sm sm:text-base inline-block animate-marquee'
-                    style={{
-                      animationDuration: "5s", // Adjust speed of scrolling
-                      animationTimingFunction: "linear",
-                      animationIterationCount: "infinite",
-                    }}
+                    className="
+      font-medium
+      text-sm
+      sm:text-base
+      inline-block
+      animate-marquee
+      sm:animate-none   // stops the marquee at the 'sm' breakpoint (640px+)
+    "
                   >
                     {game.homeTeam.name.toUpperCase()}
                   </span>
@@ -85,14 +87,16 @@ const MatchCard = ({ match }) => {
               )}
               {/* Away Team */}
               <div className='flex items-center gap-2 sm:gap-4 flex-1 justify-end'>
-                <div className='relative overflow-hidden whitespace-nowrap max-w-[100px] sm:max-w-[150px]'>
+                <div className='relative overflow-hidden whitespace-nowrap max-w-[100px] sm:max-w-[150px] sm:w-[200px]'>
                   <span
-                    className='font-medium text-sm sm:text-base inline-block animate-marquee'
-                    style={{
-                      animationDuration: "5s", // Adjust speed of scrolling
-                      animationTimingFunction: "linear",
-                      animationIterationCount: "infinite",
-                    }}
+                    className="
+      font-medium
+      text-sm
+      sm:text-base
+      inline-block
+      animate-marquee
+      sm:animate-none   // stops the marquee at the 'sm' breakpoint (640px+)
+    "
                   >
                     {game.awayTeam.name.toUpperCase()}
                   </span>

@@ -29,7 +29,7 @@ function ForgotPassword() {
   };
 
   return (
-    <Container fluid style={{ height: "100vh",backgroundImage: "url('../src/assets/ticket-gradient.png')",backgroundSize: "cover" }}>
+    <Container fluid style={{ height: "100vh",backgroundImage: "url('public/assets/ticket_gradiant.svg')",backgroundSize: "cover" }}>
     <StyledWrapper>
       <div className="form-container">
         <div className="logo-container">Forgot Password</div>

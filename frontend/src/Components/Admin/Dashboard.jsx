@@ -155,7 +155,7 @@ const { tickets } = useSelector((state) => state.tickets);
             <Ticket className="w-5 h-5 text-indigo-600" />
           </div>
           <p className="text-2xl font-semibold">{TicketSold}</p>
-          <p className="text-sm text-gray-400 mt-2">{tickets?.length} tickets</p>
+          <p className="text-sm text-gray-400 mt-2">{tickets?.length} tickets pending</p>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-xl">

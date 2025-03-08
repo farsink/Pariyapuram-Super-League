@@ -36,6 +36,8 @@ import styled from "styled-components";
 import ProtectedAdminRoute from "../Middlewares/Protected";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth, useUser } from "@clerk/clerk-react";
+import ProfileModal2 from "../Components/ProfileModal2";
+import { useModal } from "../context/ModalContext";
 
 const Sidebar = styled.div`
   .sidebar::-webkit-scrollbar {
@@ -67,7 +69,9 @@ ChartJS.register(
 function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [ProfileModalOpen, setProfileModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const { openModal } = useModal();
   const { user } = useUser();
   const { signOut } = useAuth();
   const { navigate } = useNavigate();
@@ -217,7 +221,7 @@ function Admin() {
                     }}
                   >
                     <img
-                      src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+                      src={user?.imageUrl}
                       alt='Profile'
                       className='w-8 h-8 rounded-full'
                     />
@@ -236,6 +240,7 @@ function Admin() {
                       <a
                         href='#'
                         className='px-4 py-2 text-white no-underline hover:bg-gray-700 flex items-center space-x-2'
+                        onClick={() =>  openModal()}
                       >
                         <User className='w-4 h-4' />
                         <span> Profile</span>

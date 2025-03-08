@@ -13,3 +13,27 @@
 ::-webkit-scrollbar-thumb {
   background-color: transparent;
 }
+
+@layer utilities {
+  /* 1. Define the marquee keyframes */
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* 2. Create a base class for the marquee animation */
+  .animate-marquee {
+    animation: marquee 5s linear infinite;
+    white-space: nowrap; /* Keep text on one line */
+    display: inline-block;
+  }
+
+  /* 3. Add a helper class to turn off the animation */
+  .animate-none {
+    animation: none;
+  }
+}
