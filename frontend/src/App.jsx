@@ -31,6 +31,7 @@ import ProfileModal2 from "./Components/ProfileModal2";
 import TicketsManagement from "./Components/Admin/Tickets";
 import TicketScanner from "./Components/Admin/TicketScanner";
 import NewsAdmin from "./Components/Admin/NewsAdmin";
+import { NewsProvider } from "./context/NewsContext";
 
 const stripePromise = loadStripe(
   "pk_test_51QsjtyKoJsv2Mn0LXjJ0xwEJJl2AXMRMDCrN1CPA5Igaalp21xUBMRYho7AsBiENprTJ6jdkBnPj5RE6a4j6hGmf00XcDf94WQ"
@@ -49,40 +50,50 @@ function App() {
     <>
       <UserProvider>
         <ModalProvider>
-          <ProfileModal2 />
-          {!isAdminRoute && <TestNavbar />}
-          <Elements stripe={stripePromise}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="*" element={<Home />} />
-              <Route path="/match/:matchId" element={<MatchResult />} />
-              <Route path="/videos" element={<Videos />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/tickets" element={<Tickets />}>
-                <Route path="confirmation" element={<Confirmation />} />
-              </Route>
-              <Route path="/login" element={<Auth isregister={false} />} />
-              <Route path="/register" element={<Auth isregister={true} />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/verify-email" element={<Verify isReset={false} />} />
-              <Route path="/reset-verify" element={<Verify isReset={true} />} />
-              <Route path="/resetPassword" element={<ForgotPassword />} />
-              <Route path="/admin" element={<Admin />}>
-                <Route index element={<Dashboard />} /> {/* Default admin route */}
-                <Route path="*" element={<Dashboard />} />
-                <Route path="fixture" element={<FixtureAdmin />} /> {/* Nested admin route */}
-                <Route path="players" element={<PlayersManagement />} />
-                <Route path="matches" element={<MatchesManagement />} />
-                <Route path="teams" element={<TeamsManagement />} />
-                <Route path="news" element={<NewsAdmin />} />
-                <Route path="tickets" element={<TicketsManagement />} />
-                <Route path="scanner" element={<TicketScanner />} />
-                {/* Add more nested admin routes here */}
-              </Route>
-            </Routes>
-          </Elements>
-          {!isAdminRoute && <Footer />}
+          <NewsProvider>
+            <ProfileModal2 />
+            {!isAdminRoute && <TestNavbar />}
+            <Elements stripe={stripePromise}>
+              <Routes>
+                <Route path='/' element={<Home />} />
+                <Route path='*' element={<Home />} />
+                <Route path='/match/:matchId' element={<MatchResult />} />
+                <Route path='/videos' element={<Videos />} />
+                <Route path='/news' element={<News />} />
+                <Route path='/tickets' element={<Tickets />}>
+                  <Route path='confirmation' element={<Confirmation />} />
+                </Route>
+                <Route path='/login' element={<Auth isregister={false} />} />
+                <Route path='/register' element={<Auth isregister={true} />} />
+                <Route path='/history' element={<History />} />
+                <Route path='/gallery' element={<Gallery />} />
+                <Route
+                  path='/verify-email'
+                  element={<Verify isReset={false} />}
+                />
+                <Route
+                  path='/reset-verify'
+                  element={<Verify isReset={true} />}
+                />
+                <Route path='/resetPassword' element={<ForgotPassword />} />
+                <Route path='/admin' element={<Admin />}>
+                  <Route index element={<Dashboard />} />{" "}
+                  {/* Default admin route */}
+                  <Route path='*' element={<Dashboard />} />
+                  <Route path='fixture' element={<FixtureAdmin />} />{" "}
+                  {/* Nested admin route */}
+                  <Route path='players' element={<PlayersManagement />} />
+                  <Route path='matches' element={<MatchesManagement />} />
+                  <Route path='teams' element={<TeamsManagement />} />
+                  <Route path='news' element={<NewsAdmin />} />
+                  <Route path='tickets' element={<TicketsManagement />} />
+                  <Route path='scanner' element={<TicketScanner />} />
+                  {/* Add more nested admin routes here */}
+                </Route>
+              </Routes>
+            </Elements>
+            {!isAdminRoute && <Footer />}
+          </NewsProvider>
         </ModalProvider>
       </UserProvider>
     </>

@@ -2,6 +2,8 @@
 const News = require("../Models/News");
 const fs = require("fs");
 const cloudinary = require("../utils/Cloudinary");
+const client = require("../Config/redis");
+
 
 //create news 
 exports.createNews = async (req, res) => {
@@ -80,9 +82,32 @@ exports.updateNews = async (req, res) => {
 
 // Get All News
 exports.getAllNews = async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit) || 10; // Default 10 items per page
+  const skip = (page - 1) * limit;
+  const cacheKey = `news:page:${page}:limit:${limit}`;
   try {
-    const news = await News.find().sort({ createdAt: -1 }); // Latest first
-    res.status(200).json(news);
+    // Check if data is cached in Redis
+    const cachedNews = await client.get(cacheKey);
+    if (cachedNews) {
+      console.log("Cache hit for news");
+      return res.status(200).json(JSON.parse(cachedNews));
+    }
+    const news = await News.find().skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Latest first
+    const total = await News.countDocuments();
+    // Cache the news data for 1 hour
+    await client.set(cacheKey, JSON.stringify({ news, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } }), "EX", 60 * 60); // Cache for 1 hour
+    res.status(200).json({
+      news,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch news" });
   }

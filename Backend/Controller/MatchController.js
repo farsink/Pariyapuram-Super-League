@@ -1,6 +1,7 @@
 const Match = require("../Models/Match");
 const Player = require("../Models/Player");
 const Team = require("../Models/Team");
+const client = require("../Config/redis");
 const { updatePlayerStats, updateTeamStats } = require("./HelperControls");
 
 // Create a new match
@@ -36,7 +37,18 @@ exports.createMatch = async (req, res) => {
 
 // Get all matches (populate team details)
 exports.getAllMatches = async (req, res) => {
+  const cacheKey = `matches:all`;
+  const exp_time = 60 * 60; // 1 hour;
+
+
   try {
+    // Check if matches are cached
+    const cachedMatches = await client.get(cacheKey);
+    if (cachedMatches) {
+      // If cached, return the cached data
+      console.log("Cache hit for matches");
+      return res.status(200).json(JSON.parse(cachedMatches));
+    }
     const matches = await Match.find()
       .populate({
         path: "homeTeam",
@@ -62,6 +74,8 @@ exports.getAllMatches = async (req, res) => {
         path: "cards.player",
         select: "name",
       }); // Populate away team name
+    await client.set(cacheKey, JSON.stringify(matches), "EX", exp_time); // Cache the matches for 1 hour
+    console.log("Cache miss for matches, fetching from DB and caching");
     res.status(200).json(matches);
   } catch (err) {
     res.status(500).json({ message: err.message });

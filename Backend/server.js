@@ -1,5 +1,6 @@
 const app = require("./app.js");
 const connectDB = require("./Config/db.js");
+const client = require("./Config/redis.js");
 const dotenv = require("dotenv");
 
 dotenv.config(); // Load environment variables

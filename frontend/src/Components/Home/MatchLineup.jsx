@@ -23,8 +23,9 @@ const MatchLineup = ({ match }) => {
   const HomeTeamplayers = match.homeTeam.players.map((player, index) => ({
     number: Math.floor(Math.random() * 19) + 1,
     name: player.name,
-    position:
-      player.position ? player.position : ["RB", "CM", "LW", "ST"][Math.floor(Math.random() * 3) + 1],
+    position: player.position
+      ? player.position
+      : ["RB", "CM", "LW", "ST"][Math.floor(Math.random() * 3) + 1],
   }));
 
   const HomeTeamSubs = match.homeTeam.players.slice(5).map((player) => ({
