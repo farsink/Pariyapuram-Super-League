@@ -81,7 +81,7 @@ exports.updateNews = async (req, res) => {
 
 
 // Get All News
-exports.getAllNews = async (req, res) => {
+exports.getNews = async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Default to page 1
   const limit = parseInt(req.query.limit) || 10; // Default 10 items per page
   const skip = (page - 1) * limit;
@@ -108,6 +108,16 @@ exports.getAllNews = async (req, res) => {
         totalPages: Math.ceil(total / limit),
       }
     });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch news" });
+  }
+};
+
+// get all news without pagination
+exports.getAllNews = async (req, res) => {
+  try {
+    const news = await News.find().sort({ createdAt: -1 }); // Latest first
+    res.status(200).json(news);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch news" });
   }

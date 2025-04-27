@@ -126,7 +126,13 @@ export const updateMatch = async (matchId, matchData) => {
 // fetch all news
 
 export const getNews = async (page = 1, limit = 10) => {
-  const response = await AxiosConfig(`${serverurl}/api/news/getall?page=${page}&limit=${limit}`, "GET", null, null);
+  const response = await AxiosConfig(`${serverurl}/api/news/getNews?page=${page}&limit=${limit}`, "GET", null, null);
+
+  return await response;
+};
+
+export const getallNews = async () => {
+  const response = await AxiosConfig(`${serverurl}/api/news/getall`, "GET", null, null);
 
   return await response;
 };

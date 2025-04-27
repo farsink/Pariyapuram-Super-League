@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getNews, addNews, updateNews, deleteNewsID } from "../../Api/ApiList";
+import { addNews, updateNews, deleteNewsID, getallNews } from "../../Api/ApiList";
 
 // Async Thunks
 export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
-  const response = await getNews();
+  const response = await getallNews();
   return response.data;
 });
 
