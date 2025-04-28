@@ -5,13 +5,11 @@ import { useNews } from "../../context/NewsContext";
 import FeaturedNews from "./Featured";
 // import FeaturedNews from "./Featured";
 
-const NewsContainer = ({ searchQuery = "" }) => {
+const NewsContainer = ({ searchQuery }) => {
   const { News, metadata, setpage, page } = useNews();
 
-  const filteredNews = News.filter((article) =>
-    article.title.toLowerCase().includes(searchQuery?.toLowerCase())
-  );
-  console.log(filteredNews);
+
+
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },

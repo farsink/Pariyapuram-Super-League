@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import NewsCard from "./NewsCard";
+import NewsCard from "./Newscard";
 
 const NewsGrid = ({ articles }) => {
   return (

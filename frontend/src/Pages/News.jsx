@@ -31,6 +31,7 @@ function News() {
                   <input
                     type='text'
                     placeholder='Search News...'
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className='w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-[#37003C] pr-10'
                   />
                   <Search className='absolute right-3 top-2.5 w-5 h-5 text-gray-400' />
@@ -52,7 +53,8 @@ function News() {
                 <div className='relative'>
                   <input
                     type='text'
-                    placeholder='Search highlights...'
+                    placeholder='Search News...'
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className='w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-[#37003C] pr-10'
                   />
                   <Search className='absolute right-3 top-2.5 w-5 h-5 text-gray-400' />
@@ -63,7 +65,7 @@ function News() {
         </div>
       </header>
       {/* news Container */}
-      <NewsContainer />
+      <NewsContainer searchQuery={searchQuery} />
     </>
   );
 }
